@@ -932,7 +932,7 @@ grid_plot_cmh_adapted_OBO <-
                    Y = -log10(p.adjust(cmh_pvals$cmh_adapted_obo01_vs_obo20, method = "BH")),
                    permutation_pvals = NULL,
                    percentage_significance = TRUE,
-                   title = "Adapted CMH test, FDR corrected: OBO gen01 vs OBO gen20",
+                   title = NULL,
                    x_label = FALSE,
                    y_label = NULL,
                    palette = "blue",
@@ -986,7 +986,7 @@ grid_plot_cmh_adapted_OBO <-
                    Y = -log10(p.adjust(cmh_pvals$cmh_adapted_obo01_vs_obo20_scaled, method = "BH")),
                    permutation_pvals = NULL,
                    percentage_significance = TRUE,
-                   title = "Adapted CMH test, scaled, FDR corrected: OBO gen01 vs OBO gen20",
+                   title = NULL,
                    x_label = FALSE,
                    y_label = NULL,
                    palette = "blue",
@@ -998,9 +998,9 @@ grid_plot_cmh_adapted_OB <-
                    Y = -log10(p.adjust(cmh_pvals$cmh_adapted_ob01_vs_ob20_scaled, method = "BH")),
                    permutation_pvals = NULL,
                    percentage_significance = TRUE,
-                   title = "Adapted CMH test, scaled, FDR corrected: OB gen01 vs OB gen20",
+                   title = NULL,
                    x_label = FALSE,
-                   y_label = "-log10(p-value)",
+                   y_label = NULL,
                    palette = "blue",
                    y_limit_up = y_limit_up,
                    y_limit_down = 0)
@@ -1010,17 +1010,17 @@ grid_plot_cmh_adapted_O <-
                    Y = -log10(p.adjust(cmh_pvals$cmh_adapted_o01_vs_o20_scaled, method = "BH")),
                    permutation_pvals = NULL,
                    percentage_significance = TRUE,
-                   title = "Adapted CMH test, scaled, FDR corrected: O gen01 vs O gen20",
-                   x_label = TRUE,
+                   title = NULL,
+                   x_label = FALSE,
                    y_label = NULL,
                    palette = "blue",
                    y_limit_up = y_limit_up,
                    y_limit_down = 0)
 
 # Save grid
-png(filename = "results/figures/cmh_fdr_scaled/adapted/cmh_adapted_OBO_OB_O_piled.png",
-    width = 1800,
-    height = 900)
+png(filename = "results/figures/cmh/adapted_fdr_scaled_O_piled.png",
+    width = 1200,
+    height = 650)
 
 grid.arrange(grid_plot_cmh_adapted_OBO,
              grid_plot_cmh_adapted_OB,
