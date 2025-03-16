@@ -792,15 +792,6 @@ FilterOutFixedSnps <-
   return(filtered_snp_table)
 }
 
-GetLinkageWindows <-
-  function(
-    pos,
-    window_size = 50000) {
-    
-  return(c(pos - window_size, pos + window_size))
-    
-}
-
 DiagnoseSnps <-
   function(
     filtered_snp_table) {
