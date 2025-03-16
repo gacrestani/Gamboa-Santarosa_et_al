@@ -129,7 +129,16 @@ for (i in 1:length(treatments)) {
 }
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+# 5 FDR correct everything -----------------------------------------------------
+
+fdr_cmh <- as.data.frame(lapply(cmh_pvals[-c(1,2)], function(p) p.adjust(p, method = "fdr")))
+names(fdr_cmh) <- sub("(cmh_[^_]+_)", "\\1fdr_", names(cmh_pvals)[-c(1,2)])
+
+all_cmh <- cbind(cmh_pvals, fdr_cmh)
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 # 5 Save results ---------------------------------------------------------------
-saveRDS(cmh_pvals, "data/processed/cmh_pvals.rds")
+saveRDS(all_cmh, "results/cmh_pvals.rds")
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

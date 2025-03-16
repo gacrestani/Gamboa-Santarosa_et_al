@@ -6,6 +6,11 @@
 # inputs: none
 # outputs: functions are loaded into the environment
 
+#install.packages("devtools")
+#devtools::install_github("ThomasTaus/poolSeq")
+#devtools::install_github("MartaPelizzola/ACER")
+#BiocManager::install("biomaRt")
+
 # Libraries --------------------------------------------------------------------
 library(parallel)
 library(poolSeq)
@@ -704,7 +709,7 @@ PreparePca <-
                          Z = pca$x[,3]) # Select first three Principal Components
   
   # Create grouping variable
-  pca_data$population <- factor(
+  pca_data$Population <- factor(
     gsub("([A-Z]+)_rep.._(gen..)",
          "\\1_\\2",
          pca_data$sample))
@@ -714,7 +719,7 @@ PreparePca <-
     round(pca_data$variance / sum(pca_data$variance)*100, 2)
   
   clustering_result <- kmeans(pca_df, centers = 3, nstart = 25)
-  pca_data$cluster <- as.factor(clustering_result$cluster)
+  pca_data$Cluster <- as.factor(clustering_result$cluster)
   
   return(pca_data)
 }
@@ -744,12 +749,12 @@ PlotPca <-
            aes(x=X,
                y=Y,
                label=sample,
-               color=population,
-               shape = cluster)) +
+               color=Population,
+               shape = Cluster)) +
     geom_point(size = 3) +
     scale_color_manual(values = rbpalette) +
-    xlab(paste("PC1 - ", pca_data$var.per[1], "%", sep="")) +
-    ylab(paste("PC2 - ", pca_data$var.per[2], "%", sep="")) +
+    xlab(paste("PC1 - ", pca_data$variance_percentage[1], "%", sep="")) +
+    ylab(paste("PC2 - ", pca_data$variance_percentage[2], "%", sep="")) +
     ggtitle(title)  +
     {if (label) geom_text_repel()} +
     {if (label) theme(legend.position="none")} +
