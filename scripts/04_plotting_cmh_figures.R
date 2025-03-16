@@ -4,65 +4,7 @@
 # If you want to plot one sample vs other (i.e. OBO_20 vs OB_20), it may not work!
 #
 # inputs: snp_table.rds (x4), cmh_pvals.rds, perm_pvals.csv
-# outputs: manhattan plots, in accordance with the following format:
-#
-# ./results/figures/cmh
-# │   │   ├── cmh_adapted_B.png
-# │   │   ├── cmh_adapted_nBO.png
-# │   │   ├── cmh_adapted_nB.png
-# │   │   ├── cmh_adapted_OBO_OB_O_piled.png
-# │   │   ├── cmh_adapted_OBO.png
-# │   │   ├── cmh_adapted_OB.png
-# │   │   └── cmh_adapted_O.png
-# │       ├── cmh_classic_B.png
-# │       ├── cmh_classic_nBO.png
-# │       ├── cmh_classic_nB.png
-# │       ├── cmh_classic_OBO_OB_O_piled.png
-# │       ├── cmh_classic_OBO.png
-# │       ├── cmh_classic_OB.png
-# │       └── cmh_classic_O.png
-# │   │   ├── cmh_adapted_fdr_B.png
-# │   │   ├── cmh_adapted_fdr_nBO.png
-# │   │   ├── cmh_adapted_fdr_nB.png
-# │   │   ├── cmh_adapted_fdr_OBO_OB_O_piled.png
-# │   │   ├── cmh_adapted_fdr_OBO.png
-# │   │   ├── cmh_adapted_fdr_OB.png
-# │   │   └── cmh_adapted_fdr_O.png
-# │       ├── cmh_classic_fdr_B.png
-# │       ├── cmh_classic_fdr_nBO.png
-# │       ├── cmh_classic_fdr_nB.png
-# │       ├── cmh_classic_fdr_OBO_OB_O_piled.png
-# │       ├── cmh_classic_fdr_OBO.png
-# │       ├── cmh_classic_fdr_OB.png
-# │       └── cmh_classic_fdr_O.png
-# │   │   ├── cmh_adapted_fdr_scaled_B.png
-# │   │   ├── cmh_adapted_fdr_scaled_nBO.png
-# │   │   ├── cmh_adapted_fdr_scaled_nB.png
-# │   │   ├── cmh_adapted_fdr_scaled_OBO_OB_O_piled.png
-# │   │   ├── cmh_adapted_fdr_scaled_OBO.png
-# │   │   ├── cmh_adapted_fdr_scaled_OB.png
-# │   │   └── cmh_adapted_fdr_scaled_O.png
-# │       ├── cmh_classic_fdr_scaled_B.png
-# │       ├── cmh_classic_fdr_scaled_nBO.png
-# │       ├── cmh_classic_fdr_scaled_nB.png
-# │       ├── cmh_classic_fdr_scaled_OBO_OB_O_piled.png
-# │       ├── cmh_classic_fdr_scaled_OBO.png
-# │       ├── cmh_classic_fdr_scaled_OB.png
-# │       └── cmh_classic_fdr_scaled_O.png
-#     │   ├── cmh_adapted_scaled_B.png
-#     │   ├── cmh_adapted_scaled_nBO.png
-#     │   ├── cmh_adapted_scaled_nB.png
-#     │   ├── cmh_adapted_scaled_OBO_OB_O_piled.png
-#     │   ├── cmh_adapted_scaled_OBO.png
-#     │   ├── cmh_adapted_scaled_OB.png
-#     │   └── cmh_adapted_scaled_O.png
-#         ├── cmh_classic_scaled_B.png
-#         ├── cmh_classic_scaled_nBO.png
-#         ├── cmh_classic_scaled_nB.png
-#         ├── cmh_classic_scaled_OBO_OB_O_piled.png
-#         ├── cmh_classic_scaled_OBO.png
-#         ├── cmh_classic_scaled_OB.png
-#         └── cmh_classic_scaled_O.png
+# outputs: manhattan plots
 
 source("scripts/functions.R")
 
@@ -88,217 +30,67 @@ y_limit_up <- 220 # manhattan plot y-axis upper limit
 width      <- 7740/2 # manhattan plot width
 height     <- 1440/2 # manhattan plot height
 
-treatments <- c("OBO", "OB", "nBO", "nB", "O", "B")
-gen2 <- c("20", "20", "56", "56", "20", "56")
+parameters <- data.frame(matrix(ncol = 4, nrow = 48))
+colnames(parameters) <-
+  c(
+    "treatments",
+    "gen2", 
+    "pvals",
+    "title"
+    )
+
+treatments <- c("OBO", "OB", "nBO", "nB", "O",  "B")
+parameters$treatments <- rep(treatments, times = 4)
+
+gen2 <-       c("20",  "20", "56",  "56", "20", "56")
+parameters$gen2 <- rep(gen2, times = 4)
+
+parameters$pvals <- colnames(cmh_pvals[-c(1,2)])
+
+titles <-
+  c(
+    "Classic CMH test:",
+    "Adapted CMH test:", 
+    "Classic CMH test, scaled:", 
+    "Adapted CMH test, scaled:", 
+    "Classic CMH test, FDR corrected:",
+    "Adapted CMH test, FDR corrected:", 
+    "Classic CMH test, scaled, FDR corrected:", 
+    "Adapted CMH test, scaled, FDR corrected:" 
+    )
+
+parameters$title <- rep(titles, each = 6)
+parameters$title <- paste(parameters$title, parameters$treatments, "gen 01 vs", parameters$treatments, "gen", parameters$gen2)
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-
-# 1 Classic CMH ----------------------------------------------------------------
-for (treatment in treatments) {
-  plot <-
-    GetManhattanPlot(
-      my_dataframe = cmh_pvals,
-      Y = -log10(cmh_pvals[[paste0("cmh_classic_", treatment)]]),
-      permutation_pvals = perm_pvals[[treatments[i]]],
-      percentage_significance = FALSE,
-      title = paste0("Classical CMH test: ", treatments[i], " gen01 vs ", treatments[i], " gen", gen2[i]),
-      x_label = TRUE,
-      y_label = "-log10(p-value)",
-      palette = "blue",
-      y_limit_up = y_limit_up,
-      y_limit_down = 0)
+mapply(function(pvals, title, filename) {
+  plot <- GetManhattanPlot(
+    my_dataframe = cmh_pvals,
+    Y = -log10(cmh_pvals[[pvals]]),
+    percentage_significance = TRUE,
+    title = title,
+    x_label = TRUE,
+    y_label = "-log10(p-value)",
+    palette = "blue",
+    y_limit_up = y_limit_up,
+    y_limit_down = 0
+  )
   
   ggsave(
-    paste0("results/figures/cmh/cmh_classic_", treatments[i], ".png"),
+    filename = paste0("results/figures/cmh/", pvals, ".png"),
     plot = plot,
     width = width,
     height = height,
     bg = "white",
-    units = "px")
-}
+    units = "px"
+  )
+  
+  print("Concluded", parameters$title)
+}, parameters$pvals, parameters$title, SIMPLIFY = FALSE)
+
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  
-# 2 Adapted CMH ----------------------------------------------------------------
-for (treatment in treatments) {
-  plot <-
-    GetManhattanPlot(
-      my_dataframe = cmh_pvals,
-      Y = -log10(cmh_pvals[[paste0("cmh_adapted_", treatments[i])]]),
-      permutation_pvals = NULL,
-      percentage_significance = TRUE,
-      title = paste0("Adapted CMH test: ", treatments[i], " gen01 vs ", treatments[i], " gen", gen2[i]),
-      x_label = TRUE,
-      y_label = "-log10(p-value)",
-      palette = "blue",
-      y_limit_up = y_limit_up,
-      y_limit_down = 0)
-  
-  ggsave(
-    paste0("results/figures/cmh/cmh_adapted_", treatments[i], ".png"),
-    plot = plot,
-    width = width,
-    height = height,
-    bg = "white",
-    units = "px")
-}
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-# 3 Classic CMH Scaled ---------------------------------------------------------
-for (treatment in treatments) {
-  plot <-
-    GetManhattanPlot(
-      my_dataframe = cmh_pvals,
-      Y = -log10(cmh_pvals[[paste0("cmh_classic_scaled_", treatments[i])]]),
-      permutation_pvals = NULL,
-      percentage_significance = TRUE,
-      title = paste0("Classical CMH test: ", treatments[i], " gen01 vs ", treatments[i], " gen", gen2[i], ", scaled coverage."),
-      x_label = TRUE,
-      y_label = "-log10(p-value)",
-      palette = "blue",
-      y_limit_up = y_limit_up,
-      y_limit_down = 0)
-  
-  ggsave(
-    paste0("results/figures/cmh/cmh_classic_scaled_", treatments[i], ".png"),
-    plot = plot,
-    width = width,
-    height = height,
-    bg = "white",
-    units = "px")
-}
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-# 3 Adapted CMH Scaled ---------------------------------------------------------
-for (treatment in treatments) {
-  plot <-
-    GetManhattanPlot(
-      my_dataframe = cmh_pvals,
-      Y = -log10(cmh_pvals[[paste0("cmh_adapted_scaled_", treatments[i])]]),
-      permutation_pvals = NULL,
-      percentage_significance = TRUE,
-      title = paste0("Adapted CMH test: ", treatments[i], " gen01 vs ", treatments[i], " gen", gen2[i], ", scaled coverage."),
-      x_label = TRUE,
-      y_label = "-log10(p-value)",
-      palette = "blue",
-      y_limit_up = y_limit_up,
-      y_limit_down = 0)
-  
-  ggsave(
-    paste0("results/figures/cmh/cmh_adapted_scaled_", treatments[i], ".png"),
-    plot = plot,
-    width = width,
-    height = height,
-    bg = "white",
-    units = "px")
-}
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-# 4 Classic CMH FDR ------------------------------------------------------------
-for (treatment in treatments) {
-  plot <-
-    GetManhattanPlot(
-      my_dataframe = cmh_pvals,
-      Y = -log10(p.adjust(cmh_pvals[[paste0("cmh_classic_scaled_", treatments[i])]], method = "BH")),
-      permutation_pvals = NULL,
-      percentage_significance = TRUE,
-      title = paste0("Classic CMH test: ", treatments[i], " gen01 vs ", treatments[i], " gen", gen2[i], "FDR corrected."),
-      x_label = TRUE,
-      y_label = "-log10(p-value)",
-      palette = "blue",
-      y_limit_up = y_limit_up,
-      y_limit_down = 0)
-  
-  ggsave(
-    paste0("results/figures/cmh/cmh_classic_fdr_", treatments[i], ".png"),
-    plot = plot,
-    width = width,
-    height = height,
-    bg = "white",
-    units = "px")
-}
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-# 5 Adapted CMH FDR ------------------------------------------------------------
-for (treatment in treatments) {
-  plot <-
-    GetManhattanPlot(
-      my_dataframe = cmh_pvals,
-      Y = -log10(p.adjust(cmh_pvals[[paste0("cmh_classic_scaled_", treatments[i])]], method = "BH")),
-      permutation_pvals = NULL,
-      percentage_significance = TRUE,
-      title = paste0("Adapted CMH test: ", treatments[i], " gen01 vs ", treatments[i], " gen", gen2[i], "FDR corrected."),
-      x_label = TRUE,
-      y_label = "-log10(p-value)",
-      palette = "blue",
-      y_limit_up = y_limit_up,
-      y_limit_down = 0)
-  
-  ggsave(
-    paste0("results/figures/cmh/cmh_adapted_fdr_", treatments[i], ".png"),
-    plot = plot,
-    width = width,
-    height = height,
-    bg = "white",
-    units = "px")
-}
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-
-# 6 Classic CMH Scaled FDR -----------------------------------------------------
-for (treatment in treatments) {
-  plot <-
-    GetManhattanPlot(
-      my_dataframe = cmh_pvals,
-      Y = -log10(p.adjust(cmh_pvals[[paste0("cmh_classic_scaled_", treatments[i])]], method = "BH")),
-      permutation_pvals = NULL,
-      percentage_significance = TRUE,
-      title = paste0("Classic CMH test: ", treatments[i], " gen01 vs ", treatments[i], " gen", gen2[i], ", scaled coverage, FDR corrected."),
-      x_label = TRUE,
-      y_label = "-log10(p-value)",
-      palette = "blue",
-      y_limit_up = y_limit_up,
-      y_limit_down = 0)
-  
-  ggsave(
-    paste0("results/figures/cmh/cmh_classic_scaled_fdr_", treatments[i], ".png"),
-    plot = plot,
-    width = width,
-    height = height,
-    bg = "white",
-    units = "px")
-}
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# 7 Adapted CMH Scaled FDR -----------------------------------------------------
-for (treatment in treatments) {
-  plot <-
-    GetManhattanPlot(
-      my_dataframe = cmh_pvals,
-      Y = -log10(p.adjust(cmh_pvals[[paste0("cmh_classic_scaled_", treatments[i])]], method = "BH")),
-      permutation_pvals = NULL,
-      percentage_significance = TRUE,
-      title = paste0("Adapted CMH test: ", treatments[i], " gen01 vs ", treatments[i], " gen", gen2[i], ", scaled coverage, FDR corrected."),
-      x_label = TRUE,
-      y_label = "-log10(p-value)",
-      palette = "blue",
-      y_limit_up = y_limit_up,
-      y_limit_down = 0)
-  
-  ggsave(
-    paste0("results/figures/cmh/cmh_adapted_scaled_fdr_", treatments[i], ".png"),
-    plot = plot,
-    width = width,
-    height = height,
-    bg = "white",
-    units = "px")
-}
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # 8 Grid plots -----------------------------------------------------------------
 
