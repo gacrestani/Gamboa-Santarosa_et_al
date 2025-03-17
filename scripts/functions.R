@@ -68,7 +68,16 @@ GetFreq <-
   freq <- alt / cov
   
   return(freq)
-}
+  }
+
+GetCov <-
+  function(
+    snp_table) {
+    
+    cov <- snp_table[,grep("^N_", colnames(snp_table))]
+    
+    return(cov)
+  }
 
 # 1 Data Preparation ===========================================================
 ReadSnpTable <-
