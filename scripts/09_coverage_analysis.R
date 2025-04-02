@@ -38,7 +38,8 @@ summary(mod)
 
 coverage_df$efficiency <- coverage_df$mean_cov/coverage_df$expected_cov
 mean(coverage_df$efficiency)
-
+min(coverage_df$efficiency)
+max(coverage_df$efficiency)
 
 #Plot for MSP01
 p <- coverage_df |> 
