@@ -1,3 +1,5 @@
+source("scripts/functions.R")
+
 # Read snp tables
 snp_table_shahrestani <- 
   readRDS("data/processed/processed_snps_abcd_shahrestani.rds")

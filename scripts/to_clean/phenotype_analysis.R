@@ -2,7 +2,7 @@
 
 ############### Immunity
 # Treatment
-data <- read.csv("data/immunity_gen22_treat.csv")
+data <- read.csv("data/phenotypic_data/immunity_gen22_treat.csv")
 data$Cage <- sub("[0-9] .*", "", data$Cage) # Group cages by selection treatment
 data <- data[data$Sex == "F", ] # Select only females
 
@@ -17,7 +17,7 @@ ebo_c <- data[data$Cage=="EBO","percentage"]
 
 
 # Control
-data <- read.csv("data/immunity_gen22_control.csv")
+data <- read.csv("data/phenotypic_data/immunity_gen22_control.csv")
 data$Cage <- sub("[0-9] .*", "", data$Cage)
 data <- data[data$Sex == "F", ]
 
@@ -98,13 +98,13 @@ legend("right",
 library(readxl)
 
 # Import dataset - this has to be done because of the alpha and beta characters that are not kept in a csv file. We have to use xlsx and the readxl libraries for this
-data <- read_excel("data/longevity_gen20-shahrestani-version.xlsx")
+data <- read_excel("data/phenotypic_data/longevity_gen20-shahrestani-version.xlsx")
 data$Notes <- NULL
 data <- data[data$Sex == "F", ]
 data$Sex <- NULL
 data$sign <- NULL
 
-days <- read.csv("data/days.csv", header = FALSE)
+days <- read.csv("data/phenotypic_data/days.csv", header = FALSE)
 days <- days$V1
 
 getCounts <- function(data, days) {
@@ -211,4 +211,5 @@ boxplot(ebo, eb, cbo, cb,
         xaxt = "n")
 
 boxplot(ebo, eb, cbo, cb, names = c("EBO", "EB", "CBO", "CB"), col=c("darkblue", "blue", "darkred", "red"), ylab = "Longevity (days)")
+
 
