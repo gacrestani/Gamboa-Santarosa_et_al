@@ -24,6 +24,8 @@ library(ggrepel)
 library(biomaRt)
 
 options(scipen=999) # Disable scientific notation
+
+'%!in%' <- function(x,y)!('%in%'(x,y))
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
