@@ -108,12 +108,13 @@ write.table(genes_filtered$external_gene_name, "results/genes_filtered.txt", quo
 # BiocManager::install("TxDb.Dmelanogaster.UCSC.dm6") # TxDB (transcription)
 
 #library(Drosophila_melanogaster)
+#BiocManager::install("org.Dm.eg.db")
+#BiocManager::install("TxDb.Dmelanogaster.UCSC.dm6.ensGene")
 library(org.Dm.eg.db)
 library(TxDb.Dmelanogaster.UCSC.dm6.ensGene)
 
 genes_list <- genes(TxDb.Dmelanogaster.UCSC.dm6.ensGene)
 genes_list
-
 
 mycords <- significant_snp_table[c("CHROM", "POS")]
 mycords$CHROM <- paste0("chr", mycords$CHROM)
@@ -136,9 +137,11 @@ as.data.frame(org.Dm.egSYMBOL) %>% head
 length(unique(genes$symbol))
 
 # GO Term Analysis
-# BiocManager::install("clusterProfiler")
-library(biomaRt)
+# BiocManager::install("biomaRt")
+#BiocManager::install("clusterProfiler")
 library(clusterProfiler)
+library(biomaRt)
+
 ensembl <- useEnsembl(biomart = "genes", dataset = "dmelanogaster_gene_ensembl")
 
 go_annotations <-
@@ -155,7 +158,7 @@ reliable_go_annotations <- go_annotations[!go_annotations$go_linkage_type %in% u
 
 go_results <-
   enrichGO(
-    gene = go_annotations$ensembl_gene_id,,
+    gene = reliable_go_annotations$ensembl_gene_id,
     OrgDb = org.Dm.eg.db,
     keyType = "ENSEMBL",
     ont = "BP",
@@ -173,3 +176,11 @@ simple_go_results_df <- as.data.frame(simple_go_results)
 print(go_results_df)
 dotplot(go_results, showCategory = 20)
 dotplot(simple_go_results, showCategory = 20)
+
+BiocManager::install("enrichplot")
+library(enrichplot)
+upsetplot(go_results)
+upsetplot(simple_go_results)
+
+emapplot(go_results)
+emapplot(simple_go_results)
