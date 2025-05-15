@@ -149,3 +149,16 @@ grid.arrange(
 dev.off()
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+GetManhattanPlot(
+  my_dataframe = cmh_pvals,
+  Y = -log10(cmh_pvals$cmh_adapted_o01_vs_o20),
+  #permutation_pvals = perm_pvals$o,
+  percentage_significance = TRUE,
+  title = NULL,
+  x_label = TRUE,
+  y_label = "-log10(q-values)",
+  palette = "blue",
+  y_limit_up = y_limit_up,
+  y_limit_down = 0)

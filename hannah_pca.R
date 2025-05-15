@@ -1,11 +1,12 @@
 library(ggplot2)     
+library(stringr)
 
-
-df <- read.csv("~/Downloads/pca_data.csv")
+df <- pca
+#df <- read.csv("~/Downloads/pca_data.csv")
 df$Sample <- NULL
 df$af <- NULL
 df$Treatment_Rep <- paste0(df$Treatment, "_Rep", df$Replicate)
-df$Timepoint <- as.factor(df$Timepoint)
+df$Timepoint <- str_extract(df$Population, "\\d+")
 df$Replicate <- as.character(df$Replicate)
 
 treatment_colors <- c(
@@ -18,7 +19,7 @@ treatment_colors <- c(
 treatment_order <- c("A", "H", "F", "L")
 
 # Plot
-ggplot(df, aes(x = Timepoint, y = PC5, group = Treatment_Rep, color = Treatment)) +
+ggplot(df, aes(x = Timepoint, y = X, group = Treatment_Rep, color = Treatment)) +
   geom_line(alpha = 0.7) +
   geom_point(size = 2) +
   scale_color_manual(
