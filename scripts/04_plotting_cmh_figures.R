@@ -151,14 +151,61 @@ dev.off()
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-GetManhattanPlot(
+o <- GetManhattanPlot(
   my_dataframe = cmh_pvals,
   Y = -log10(cmh_pvals$cmh_adapted_o01_vs_o20),
   #permutation_pvals = perm_pvals$o,
   percentage_significance = TRUE,
-  title = NULL,
+  title = "O",
   x_label = TRUE,
   y_label = "-log10(q-values)",
   palette = "blue",
   y_limit_up = y_limit_up,
   y_limit_down = 0)
+
+obo <- GetManhattanPlot(
+  my_dataframe = cmh_pvals,
+  Y = -log10(cmh_pvals$cmh_adapted_fdr_obo01_vs_obo20_scaled),
+  #permutation_pvals = perm_pvals$o,
+  percentage_significance = TRUE,
+  title = "OBO",
+  x_label = TRUE,
+  y_label = "-log10(q-values)",
+  palette = "blue",
+  y_limit_up = y_limit_up,
+  y_limit_down = 0)
+
+ob <- GetManhattanPlot(
+  my_dataframe = cmh_pvals,
+  Y = -log10(cmh_pvals$cmh_adapted_fdr_ob01_vs_ob20_scaled),
+  #permutation_pvals = perm_pvals$o,
+  percentage_significance = TRUE,
+  title = "OB",
+  x_label = TRUE,
+  y_label = "-log10(q-values)",
+  palette = "blue",
+  y_limit_up = y_limit_up,
+  y_limit_down = 0)
+
+obo_nolabel <- GetManhattanPlot(
+  my_dataframe = cmh_pvals,
+  Y = -log10(cmh_pvals$cmh_adapted_fdr_obo01_vs_obo20_scaled),
+  #permutation_pvals = perm_pvals$o,
+  percentage_significance = TRUE,
+  title = "OBO",
+  x_label = FALSE,
+  y_label = "-log10(q-values)",
+  palette = "blue",
+  y_limit_up = y_limit_up,
+  y_limit_down = 0)
+
+
+ggsave("results/figures/cmh/cmh_fdr_scaled/adapted/obo.png", obo, width = 8, height = 3, units = "in", dpi = 450)
+ggsave("results/figures/cmh/cmh_fdr_scaled/adapted/ob.png", ob, width = 8, height = 3, units = "in", dpi = 450)
+ggsave("results/figures/cmh/cmh_fdr_scaled/adapted/o.png", o, width = 8, height = 3, units = "in", dpi = 450)
+
+grid_plot <- grid.arrange(obo,
+                          ob,
+                          nrow = 2)
+
+ggsave("results/figures/cmh/cmh_fdr_scaled/adapted/obo_ob.png", grid_plot, width = 8, height = 6, units = "in", dpi = 450)
