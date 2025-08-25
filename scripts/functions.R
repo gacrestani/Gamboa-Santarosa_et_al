@@ -1,4 +1,3 @@
-
 # functions.R
 # This script works like a library (in fact, it should become a library in the future).
 # It contains all the functions I require to perform the analyses, as well as the libraries I need for each step.
@@ -529,7 +528,8 @@ GetManhattanPlot <-
     p <- ggplot(my_dataframe,
                 aes(x = ABS_POS, 
                     y = Y,
-                    color = as.factor(CHROM))) +
+                    color = as.factor(CHROM),
+                    text = text)) +
       geom_point(alpha = 0.75) +
       scale_x_continuous(labels = names(axis_set), breaks = axis_set) +
       {if (!x_label) scale_x_continuous(labels = NULL, breaks = axis_set)} +
@@ -538,6 +538,8 @@ GetManhattanPlot <-
         scale_color_manual(values = rep(c("steelblue1", "steelblue4"), unique(length(axis_set))))} +
       {if (palette == "red")
         scale_color_manual(values = rep(c("firebrick1", "firebrick4"), unique(length(axis_set))))} +
+      {if (palette == "grey")
+        scale_color_manual(values = rep(c("black", "grey"), unique(length(axis_set))))} +
       scale_size_continuous(range = c(0.5,3)) +
       labs(x = NULL, y = y_label) +
       theme_minimal() +

@@ -10,11 +10,11 @@ source("scripts/functions.R")
 
 # 0 Initializing ---------------------------------------------------------------
 # Read snp tables
-snp_table_shahrestani <- 
-  readRDS("data/processed/processed_snps_abcd_shahrestani.rds")
-
-snp_table_regimes <-
-  readRDS("data/processed/processed_snps_abcd_regimes.rds")
+# snp_table_shahrestani <- 
+#   readRDS("data/processed/processed_snps_abcd_shahrestani.rds")
+# 
+# snp_table_regimes <-
+#   readRDS("data/processed/processed_snps_abcd_regimes.rds")
 
 snp_table_shahrestani_scaled <- 
   readRDS("data/processed/processed_snps_abcd_shahrestani_scaled.rds")
@@ -27,8 +27,6 @@ perm_pvals <- fread("results/perm_pvals.csv")
 
 # Parameters
 y_limit_up <- 220 # manhattan plot y-axis upper limit
-width      <- 7740/2 # manhattan plot width
-height     <- 1440/2 # manhattan plot height
 
 parameters <- data.frame(matrix(ncol = 4, nrow = 48))
 colnames(parameters) <-
@@ -151,26 +149,14 @@ dev.off()
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-o <- GetManhattanPlot(
-  my_dataframe = cmh_pvals,
-  Y = -log10(cmh_pvals$cmh_adapted_o01_vs_o20),
-  #permutation_pvals = perm_pvals$o,
-  percentage_significance = TRUE,
-  title = "O",
-  x_label = TRUE,
-  y_label = "-log10(q-values)",
-  palette = "blue",
-  y_limit_up = y_limit_up,
-  y_limit_down = 0)
-
 obo <- GetManhattanPlot(
   my_dataframe = cmh_pvals,
   Y = -log10(cmh_pvals$cmh_adapted_fdr_obo01_vs_obo20_scaled),
   #permutation_pvals = perm_pvals$o,
   percentage_significance = TRUE,
   title = "OBO",
-  x_label = TRUE,
-  y_label = "-log10(q-values)",
+  x_label = FALSE,
+  y_label = "",
   palette = "blue",
   y_limit_up = y_limit_up,
   y_limit_down = 0)
@@ -181,31 +167,163 @@ ob <- GetManhattanPlot(
   #permutation_pvals = perm_pvals$o,
   percentage_significance = TRUE,
   title = "OB",
-  x_label = TRUE,
-  y_label = "-log10(q-values)",
-  palette = "blue",
-  y_limit_up = y_limit_up,
-  y_limit_down = 0)
-
-obo_nolabel <- GetManhattanPlot(
-  my_dataframe = cmh_pvals,
-  Y = -log10(cmh_pvals$cmh_adapted_fdr_obo01_vs_obo20_scaled),
-  #permutation_pvals = perm_pvals$o,
-  percentage_significance = TRUE,
-  title = "OBO",
   x_label = FALSE,
   y_label = "-log10(q-values)",
   palette = "blue",
   y_limit_up = y_limit_up,
   y_limit_down = 0)
 
+o <- GetManhattanPlot(
+  my_dataframe = cmh_pvals,
+  Y = -log10(cmh_pvals$cmh_adapted_o01_vs_o20),
+  #permutation_pvals = perm_pvals$o,
+  percentage_significance = TRUE,
+  title = "O",
+  x_label = TRUE,
+  y_label = "",
+  palette = "blue",
+  y_limit_up = y_limit_up,
+  y_limit_down = 0)
 
-ggsave("results/figures/cmh/cmh_fdr_scaled/adapted/obo.png", obo, width = 8, height = 3, units = "in", dpi = 450)
-ggsave("results/figures/cmh/cmh_fdr_scaled/adapted/ob.png", ob, width = 8, height = 3, units = "in", dpi = 450)
-ggsave("results/figures/cmh/cmh_fdr_scaled/adapted/o.png", o, width = 8, height = 3, units = "in", dpi = 450)
+
+# ggsave("results/figures/cmh/cmh_fdr_scaled/adapted/obo.png", obo, width = 8, height = 3, units = "in", dpi = 450)
+# ggsave("results/figures/cmh/cmh_fdr_scaled/adapted/ob.png", ob, width = 8, height = 3, units = "in", dpi = 450)
+# ggsave("results/figures/cmh/cmh_fdr_scaled/adapted/o.png", o, width = 8, height = 3, units = "in", dpi = 450)
 
 grid_plot <- grid.arrange(obo,
                           ob,
-                          nrow = 2)
+                          o,
+                          nrow = 3)
 
-ggsave("results/figures/cmh/cmh_fdr_scaled/adapted/obo_ob.png", grid_plot, width = 8, height = 6, units = "in", dpi = 450)
+ggsave("results/figures/cmh/cmh_fdr_scaled/adapted/obo_ob_o.png", grid_plot, width = 7.5, height = 9, units = "in", dpi = 600)
+
+nbo <- GetManhattanPlot(
+  my_dataframe = cmh_pvals,
+  Y = -log10(cmh_pvals$cmh_adapted_fdr_nbo01_vs_nbo56_scaled),
+  percentage_significance = TRUE,
+  title = "nBO",
+  x_label = FALSE,
+  y_label = "",
+  palette = "red",
+  y_limit_up = y_limit_up,
+  y_limit_down = 0
+) 
+
+nb <- GetManhattanPlot(
+  my_dataframe = cmh_pvals,
+  Y = -log10(cmh_pvals$cmh_adapted_fdr_nb01_vs_nb56_scaled),
+  percentage_significance = TRUE,
+  title = "nB",
+  x_label = FALSE,
+  y_label = "-log10(q-value)",
+  palette = "red",
+  y_limit_up = y_limit_up,
+  y_limit_down = 0
+) 
+
+b <- GetManhattanPlot(
+  my_dataframe = cmh_pvals,
+  Y = -log10(cmh_pvals$cmh_adapted_fdr_b01_vs_b56_scaled),
+  percentage_significance = TRUE,
+  title = "B",
+  x_label = TRUE,
+  y_label = "",
+  palette = "red",
+  y_limit_up = y_limit_up,
+  y_limit_down = 0
+) 
+
+# ggsave("results/figures/cmh/cmh_fdr_scaled/adapted/b.png", b, width = 8, height = 3, units = "in", dpi = 450)
+# ggsave("results/figures/cmh/cmh_fdr_scaled/adapted/b.png", b, width = 8, height = 3, units = "in", dpi = 450)
+# ggsave("results/figures/cmh/cmh_fdr_scaled/adapted/b.png", b, width = 8, height = 3, units = "in", dpi = 450)
+
+grid_plot <- grid.arrange(nbo,
+                          nb,
+                          b,
+                          nrow = 3)
+
+ggsave("results/figures/cmh/cmh_fdr_scaled/adapted/nbo_nb_b.png", grid_plot, width = 7.5, height = 9, units = "in", dpi = 600)
+
+
+
+
+
+
+
+
+
+
+# B56 vs O20
+
+p_vals_ob <- ClassicalCmhTest(
+  snp_table_shahrestani_scaled,
+  treatment1 = "OBO",
+  gen1 = "20",
+  treatment2 = "nBO",
+  gen2 = "56"
+)
+
+p_vals_b <- ClassicalCmhTest(
+  snp_table_shahrestani_scaled,
+  treatment1 = "OB",
+  gen1 = "20",
+  treatment2 = "nB",
+  gen2 = "56"
+)
+
+p_vals_b_ob <- ClassicalCmhTest(
+  snp_table_regimes_scaled,
+  treatment1 = "O",
+  gen1 = "20",
+  treatment2 = "B",
+  gen2 = "56"
+)
+
+p_vals_adj_ob <- p.adjust(p_vals_ob, method = "fdr")
+p_vals_adj_b <- p.adjust(p_vals_b, method = "fdr")
+p_vals_adj_b_ob <- p.adjust(p_vals_b_ob, method = "fdr")
+
+ob <- GetManhattanPlot(
+  my_dataframe = cmh_pvals,
+  Y = -log10(p_vals_adj_ob),
+  percentage_significance = TRUE,
+  title = "OBO20 vs nBO55",
+  x_label = FALSE,
+  y_label = "",
+  palette = "grey",
+  y_limit_up = y_limit_up,
+  y_limit_down = 0
+) 
+
+
+b <- GetManhattanPlot(
+  my_dataframe = cmh_pvals,
+  Y = -log10(p_vals_adj_b),
+  percentage_significance = TRUE,
+  title = "OB20 vs nB55",
+  x_label = FALSE,
+  y_label = "-log10(q-value)",
+  palette = "grey",
+  y_limit_up = y_limit_up,
+  y_limit_down = 0
+) 
+
+b_ob <- GetManhattanPlot(
+  my_dataframe = cmh_pvals,
+  Y = -log10(p_vals_adj_b_ob),
+  percentage_significance = TRUE,
+  title = "O20 vs B55",
+  x_label = TRUE,
+  y_label = "",
+  palette = "grey",
+  y_limit_up = y_limit_up,
+  y_limit_down = 0
+) 
+
+grid_plot <- grid.arrange(ob,
+                          b,
+                          b_ob,
+                          nrow = 3)
+
+ggsave("results/figures/cmh/cmh_fdr_scaled/adapted/o20_vs_b56_classic.png", grid_plot, width = 7.5, height = 9, units = "in", dpi = 600)
+

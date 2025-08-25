@@ -1,20 +1,20 @@
 library(readxl)
 library(tidyverse)
 
-input_df <- read_excel("data/phenotypic_data/raw/Longevity Gen 20.xlsx") %>%
-  select(-sign, -Notes)
+# Use this to generate the same plot but with the intermediate generation data
+input_df <- read_excel("data/phenotypic_data/raw/Longevity Gen 12 (cleaned).xlsx") %>%
+  select(-Notes, - `Cage #`)
 
 days <- as.numeric(colnames(input_df)[3:ncol(input_df)])
 days <- c(0, days[-1] - days[1])
 colnames(input_df) <- c("Cage", "Sex", paste0("d", days))
 
 summary_df <- input_df %>%
-  mutate(Cage = str_remove(Cage, " \\(.*\\)")) %>%
   group_by(Cage, Sex) %>%
-  summarise(across(where(is.numeric), mean), .groups = "drop")
+  summarise(across(where(is.numeric), ~ mean(replace(.x, is.na(.x), 0))), .groups = "drop")
 
 count_matrix <- summary_df[3:ncol(summary_df)]
-total_flies <- rowSums(count_matrix)
+total_flies <- rowSums(count_matrix, na.rm = TRUE)
 
 longevity_matrix <- sweep(count_matrix, MARGIN = 2, days, `*`)
 total_longevity <- rowSums(longevity_matrix)
@@ -63,5 +63,5 @@ createPlot <- function(ancestry = FALSE) {
   return(p)
 }
 
-longevity_boxplots <- createPlot()
-longevity_boxplots_anc <- createPlot(ancestry = TRUE)
+longevity_boxplots_gen12 <- createPlot()
+longevity_boxplots_anc_gen12 <- createPlot(ancestry = TRUE)

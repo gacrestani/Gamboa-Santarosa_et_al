@@ -60,4 +60,3 @@ p <- coverage_df |>
            size = 4, color ="blue")+
   ggtitle(label="FlyLong Coverage Report - All Libraries")
 p
-

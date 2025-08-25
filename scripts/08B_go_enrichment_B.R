@@ -1,25 +1,28 @@
 source("scripts/functions.R")
 
-# Read snp tables
-snp_table <- # Regimes scaled
+snp_table <- # Use this for B1-10 gen 01 vs B1-10 gen 55
   readRDS("data/processed/processed_snps_abcd_regimes_scaled.rds")
 
-cmh_pvals <- readRDS("results/cmh_pvals.rds")
+snp_table <- # Use this for nBO1-5 gen01 vs nBO1-5 gen 55
+  readRDS("data/processed/processed_snps_abcd_shahrestani_scaled.rds")
 
-# Add the CMH vals to the snp_table so we can filter them all together
+cmh_pvals <- readRDS("results/cmh_pvals.rds")
 cmh_pvals$ABS_POS <- NULL
 cmh_pvals$CHROM <- NULL
 snp_table_cmh <- cbind(snp_table, cmh_pvals)
 
-threshold <- 1e-100
+peak_identification <- snp_table_cmh %>% dplyr::select(CHROM, POS, ABS_POS, cmh_adapted_b01_vs_b56_scaled)
+peak_identification$log10 <- -log10(peak_identification$cmh_adapted_b01_vs_b56_scaled)
 
-column <- snp_table_cmh$cmh_adapted_o01_vs_o20_scaled
+# B1-10 peaks:
+# Peak1: start = 2R:3,702,504 max: 2R:3,704,168 (64) end: 2R:3,704,733
+# Peak2: start = 2R:4,849,264 max: 2R:4,852,295 (91) end: 2R:4,853,176
+# Peak3: start = 3L:25,209,917 max: 3L:25,211,163 (91) end: 3L:25,219,680
 
-significant_snp_table <- snp_table_cmh[which(p.adjust(column,  method = "fdr") < threshold),]
+column <- snp_table_cmh$cmh_adapted_nbo01_vs_nbo56_scaled
+column <- snp_table_cmh$cmh_adapted_b01_vs_b56_scaled
 
-peak_identification <- significant_snp_table %>% dplyr::select(CHROM, POS, ABS_POS, cmh_adapted_o01_vs_o20_scaled)
-peak_identification$log10 <- -log10(peak_identification$cmh_adapted_o01_vs_o20_scaled)
-
+significant_snp_table2 <- snp_table_cmh[which(p.adjust(column,  method = "fdr") < threshold),]
 
 library(org.Dm.eg.db)
 library(TxDb.Dmelanogaster.UCSC.dm6.ensGene)
@@ -40,22 +43,6 @@ genes <- as.data.frame(subset)
 genes$symbol <- mapIds(org.Dm.eg.db, keys = genes$gene_id, column = "SYMBOL", keytype = "ENSEMBL")
 
 
-
-
-immune_genes <- read.table("~/Downloads/FlyBase_IDs_immune.txt")
-my_immune_genes <- genes[genes$gene_id %in% immune_genes$V1,]
-
-lifespan_genes <- read.table("~/Downloads/FlyBase_IDs_lifespan.txt")
-my_lifespan_genes <- genes[genes$gene_id %in% lifespan_genes$V1,]
-
-defenese_genes <- read.table("~/Downloads/FlyBase_IDs_defense.txt")
-my_defense_genes <- genes[genes$gene_id %in% defenese_genes$V1,]
-
-
-
-
-
-
 library(clusterProfiler)
 library(biomaRt)
 
@@ -70,6 +57,7 @@ go_annotations <-
   )
 
 unwanted_go_evidence <- c("TAS", "NAS", "IC", "ND")
+
 reliable_go_annotations <- go_annotations[!go_annotations$go_linkage_type %in% unwanted_go_evidence,]
 
 go_results <-
@@ -89,14 +77,11 @@ simple_go_results <- simplify(go_results)
 simple_go_results_df <- as.data.frame(simple_go_results)
 
 
-print(go_results_df)
-dotplot(go_results, showCategory = 20)
-dotplot(simple_go_results, showCategory = 20)
 
-BiocManager::install("enrichplot")
-library(enrichplot)
-upsetplot(go_results)
-upsetplot(simple_go_results)
 
-emapplot(go_results)
-emapplot(simple_go_results)
+
+
+
+
+
+

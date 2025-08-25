@@ -68,7 +68,7 @@ createPlot <- function(ancestry = FALSE) {
     labs(
       title = "Desiccation resistance",
       x = NULL,
-      y = "Hours survived"
+      y = "Survival (hours)"
     ) +
     theme_bw() +
     theme(

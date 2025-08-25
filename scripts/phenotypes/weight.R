@@ -46,9 +46,9 @@ createPlot <- function(ancestry = FALSE) {
     geom_boxplot(outlier.shape = NA, width = 0.6) +
     scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
     labs(
-      title = "Wet weight",
+      title = "Weight",
       x = NULL,
-      y = "Wet weight (mg)"
+      y = "Weight (mg)"
     ) +
     theme_bw() +
     theme(
