@@ -3,6 +3,8 @@ data/snp_tables/*
 data/processed/*
 results/*
 
+renv/library/
+
 ####
 # History files
 .Rhistory
