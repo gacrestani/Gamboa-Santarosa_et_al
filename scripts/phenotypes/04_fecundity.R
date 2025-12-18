@@ -4,7 +4,7 @@ library(purrr)
 library(tidyr)
 library(ggplot2)
 
-file_path <- "data/phenotypic_data/raw/Fecundity Gen 20.xlsx"
+file_path <- "data/phenotypic_data/Fecundity Gen 20.xlsx"
 sheets <- excel_sheets(file_path)[4:length(excel_sheets(file_path))]
 
 vial_cols <- c("Population-Vial #...1", "Population-Vial #...4", "Population-Vial #...7", "Population-Vial #...10")

@@ -1,7 +1,7 @@
 library(readxl)
 library(tidyverse)
 
-file_path <- "data/phenotypic_data/raw/Starvation Resistance Gen 22.xlsx"
+file_path <- "data/phenotypic_data/Starvation Resistance Gen 22.xlsx"
 
 read_transposed_xlsx <- function(file) {
   df <- read_excel(file, col_names = FALSE)

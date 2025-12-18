@@ -2,7 +2,7 @@ library(readxl)
 library(tidyverse)
 
 # Use this to generate the same plot but with the intermediate generation data
-input_df <- read_excel("data/phenotypic_data/raw/Longevity Gen 12 (cleaned).xlsx") %>%
+input_df <- read_excel("data/phenotypic_data/Longevity Gen 12 (cleaned).xlsx") %>%
   select(-Notes, - `Cage #`)
 
 days <- as.numeric(colnames(input_df)[3:ncol(input_df)])

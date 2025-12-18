@@ -1,7 +1,7 @@
 library(readxl)
 library(tidyverse)
 
-path <- "data/phenotypic_data/raw/Development Time Gen 20.xlsx"
+path <- "data/phenotypic_data/Development Time Gen 20.xlsx"
 
 input_df <- read_excel(path, na = "-", skip = 1, col_types = "text") %>%
   select(-Notes)

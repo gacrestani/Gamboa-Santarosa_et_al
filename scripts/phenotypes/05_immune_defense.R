@@ -2,7 +2,7 @@ library(readxl)
 library(tidyverse)
 library(ggpubr)
 
-file_path <- "data/phenotypic_data/raw/Immunity Gen 22.xlsx"
+file_path <- "data/phenotypic_data/Immunity Gen 22.xlsx"
 sheets <- excel_sheets(file_path)
 days <- 1:13
 

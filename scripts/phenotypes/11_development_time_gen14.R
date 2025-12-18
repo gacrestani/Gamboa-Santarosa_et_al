@@ -1,9 +1,9 @@
 library(readxl)
 library(tidyverse)
 
-input_df <- read_excel("data/phenotypic_data/raw/Development Time Gen 14.xlsx", skip = 1, col_types = "text", na = "NA")
+input_df <- read_excel("data/phenotypic_data/Development Time Gen 14.xlsx", skip = 1, col_types = "text", na = "NA")
 
-time <- read_excel("data/phenotypic_data/raw/Development Time Gen 14.xlsx")[1,]
+time <- read_excel("data/phenotypic_data/Development Time Gen 14.xlsx")[1,]
 hours <- colnames(time)
 hours <- as.numeric(hours[4:length(hours)])
 
