@@ -1,11 +1,11 @@
-source("scripts/phenotypes/instant_mortality_curves.R")
-source("scripts/phenotypes/longevity_boxplots.R")
-source("scripts/phenotypes/development_time.R")
-source("scripts/phenotypes/fecundity.R")
-source("scripts/phenotypes/immune_defense.R")
-source("scripts/phenotypes/weight.R")
-source("scripts/phenotypes/starvation.R")
-source("scripts/phenotypes/desiccation.R")
+source("scripts/phenotypes/01_instant_mortality_curves.R")
+source("scripts/phenotypes/02_longevity_boxplots.R")
+source("scripts/phenotypes/03_development_time.R")
+source("scripts/phenotypes/04_fecundity.R")
+source("scripts/phenotypes/05_immune_defense.R")
+source("scripts/phenotypes/06_weight.R")
+source("scripts/phenotypes/07_starvation_resistance.R")
+source("scripts/phenotypes/08_desiccation_resistance.R")
 
 library(ggpubr)
 
@@ -13,10 +13,10 @@ default <- ggarrange(mortality_curves,
                      longevity_boxplots,
                      devtime_boxplots,
                      fecundity_boxplots,
-                     immune_defense_boxplots,
                      weight_boxplots,
                      starvation_boxplots,
                      desiccation_boxplots,
+                     immune_defense_boxplots,
                      labels = c("A", "B", "C", "D", "E", "F", "G", "H"),
                      common.legend = TRUE,
                      legend = "bottom",
@@ -26,10 +26,10 @@ ancestry <- ggarrange(mortality_curves_anc,
                       longevity_boxplots_anc,
                       devtime_boxplots_anc,
                       fecundity_boxplots_anc,
-                      immune_defense_boxplots_anc,
                       weight_boxplots_anc,
                       starvation_boxplots_anc,
                       desiccation_boxplots_anc,
+                      immune_defense_boxplots_anc,
                       labels = c("A", "B", "C", "D", "E", "F", "G", "H"),
                       common.legend = TRUE,
                       legend = "bottom",
@@ -55,9 +55,9 @@ ggsave("results/ancestry_phenotype_panels.png",
 
 
 
-source("scripts/phenotypes/instant_mortality_curves_gen12.R")
-source("scripts/phenotypes/longevity_boxplots_gen12.R")
-source("scripts/phenotypes/development_time_gen14.R")
+source("scripts/phenotypes/09_instant_mortality_curves_gen12.R")
+source("scripts/phenotypes/10_longevity_boxplots_gen12.R")
+source("scripts/phenotypes/11_development_time_gen14.R")
 
 
 intermediate <- ggarrange(mortality_curves_gen12,
@@ -95,3 +95,15 @@ ggsave("results/intermediate_phenotypes.png",
 ggsave("results/intermediate_phenotypes_anc.png",
        plot = intermediate_anc,
        width = 8.5, height = 6, units = "in", dpi = 600)
+
+
+# STATS
+
+summary(cox_model)
+summary(lm_fit_longevity)
+summary(lm_fit_devtime)
+summary(lm_fit_fecundity)
+summary(lm_fit_immune_defense)
+summary(lm_fit_weight)
+summary(lm_fit_starvation)
+summary(lm_fit_desiccation)

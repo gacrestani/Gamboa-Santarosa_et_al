@@ -47,6 +47,12 @@ rate_df <- compute_log_mortality(summary_df[3:ncol(summary_df)]) %>%
       TRUE ~ NA_character_
     ),
     Sample = rownames(.)
+  ) %>%
+  mutate(
+    Sex = case_when(
+      grepl("F", Sex) ~ "Female",
+      grepl("M", Sex) ~ "Male"
+    )
   )
 
 long_df <- rate_df %>%
@@ -83,6 +89,9 @@ createPlot <- function(ancestry = FALSE) {
 mortality_curves <- createPlot()
 mortality_curves_anc <- createPlot(ancestry = TRUE)
 
+mortality_curves_anc
+
+#mortality_curves + stat_summary(aes(fill= Regime), geom = "ribbon", fun.data = "mean_cl_normal")
 
 # Statistical analysis
 # Cox proportional hazards model
@@ -129,8 +138,5 @@ dead_flies <- long_input_df %>%
 cox_model <- coxph(Surv(Day, status) ~ Regime + Ancestry + Sex, data = dead_flies)
 cox.zph(cox_model) # Proportionality is violated
 
-cox_model <- coxph(Surv(Day, status) ~ tt(Regime) + tt(Ancestry) + tt(Sex) , data = dead_flies)
-print(cox_model)
-
-
-
+cox_model <- coxph(Surv(Day, status) ~ tt(Regime) + tt(Ancestry) + tt(Sex), data = dead_flies)
+summary(cox_model)

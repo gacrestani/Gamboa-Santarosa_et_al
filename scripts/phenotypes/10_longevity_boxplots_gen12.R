@@ -7,61 +7,106 @@ input_df <- read_excel("data/phenotypic_data/raw/Longevity Gen 12 (cleaned).xlsx
 
 days <- as.numeric(colnames(input_df)[3:ncol(input_df)])
 days <- c(0, days[-1] - days[1])
-colnames(input_df) <- c("Cage", "Sex", paste0("d", days))
+d_days <- paste0("d", days)
+colnames(input_df) <- c("Cage", "Sex", d_days)
 
-summary_df <- input_df %>%
-  group_by(Cage, Sex) %>%
-  summarise(across(where(is.numeric), ~ mean(replace(.x, is.na(.x), 0))), .groups = "drop")
+longevity_df <- input_df[d_days]
+pop_sizes <- rowSums(longevity_df, na.rm = TRUE)
+longevity_df <- sweep(longevity_df, MARGIN = 2, days, `*`)
 
-count_matrix <- summary_df[3:ncol(summary_df)]
-total_flies <- rowSums(count_matrix, na.rm = TRUE)
+mean_cage_longevity <- rowSums(longevity_df, na.rm = TRUE) / pop_sizes
+summary_df <- cbind(input_df[, 1:2], mean_cage_longevity)
 
-longevity_matrix <- sweep(count_matrix, MARGIN = 2, days, `*`)
-total_longevity <- rowSums(longevity_matrix)
+summary_df <- summary_df %>%
+  mutate(Population = str_remove(Cage, " \\(.*\\)")) %>%
+  group_by(Population, Sex) %>%
+  summarise(across(where(is.numeric), mean), .groups = "drop")
 
-calc_df <- count_matrix %>%
+calc_df <- summary_df %>%
   mutate(
-    mean_longevity = total_longevity / total_flies,
-    Cage = summary_df$Cage,
+    mean_pop_longevity = mean_cage_longevity,
+    Population = summary_df$Population,
     Regime = case_when(
-      grepl("EB|EBO", Cage) ~ "O-type",
-      grepl("CB|CBO", Cage) ~ "B-type",
+      grepl("EB|EBO", Population) ~ "O-type",
+      grepl("CB|CBO", Population) ~ "B-type",
       TRUE ~ NA_character_
     ),
     Ancestry = case_when(
-      grepl("CBO|EBO", Cage) ~ "BO",
-      grepl("CB|EB", Cage) ~ "B",
+      grepl("CBO|EBO", Population) ~ "BO",
+      grepl("CB|EB", Population) ~ "B",
       TRUE ~ NA_character_
     ),
-    Sex = summary_df$Sex,
-    Replicate = as.factor(gsub("\\D", "", Cage)),
+    Sex = case_when(
+      grepl("F", Sex) ~ "Female",
+      grepl("M", Sex) ~ "Male"
+    ),
+    Replicate = as.factor(gsub("\\D", "", Population)),
     Treatment = case_when(
-      grepl("EBO", Cage) ~ "OBO",
-      grepl("EB", Cage) ~ "OB",
-      grepl("CBO", Cage) ~ "nBO",
-      grepl("CB", Cage) ~ "nB",
+      grepl("EBO", Population) ~ "OBO",
+      grepl("EB", Population) ~ "OB",
+      grepl("CBO", Population) ~ "nBO",
+      grepl("CB", Population) ~ "nB",
       TRUE ~ NA_character_
     )
   )
 
-createPlot <- function(ancestry = FALSE) {
-  p <- ggplot(calc_df, aes(x = Sex, y = mean_longevity, fill = Regime)) +
-    geom_boxplot(outlier.shape = NA, width = 0.6) +
-    scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
-    theme_bw() +
-    labs(
-      title = "Longevity",
-      x = NULL,
-      y = "Longevity (days)"
-    ) +
-    theme(legend.position = "none")
-  
-  if (ancestry) {
-    p <- p + facet_grid(~Ancestry)
-  }
-  
-  return(p)
-}
+calc_df$Treatment <- factor(calc_df$Treatment, levels = c("OBO",
+                                                          "OB",
+                                                          "nBO",
+                                                          "nB"))
 
-longevity_boxplots_gen12 <- createPlot()
-longevity_boxplots_anc_gen12 <- createPlot(ancestry = TRUE)
+
+# PLOTS
+longevity_boxplots_gen12 <- ggplot(calc_df, aes(x = Regime, y = mean_pop_longevity, fill = Regime)) +
+  geom_boxplot(width = 0.6) +
+  scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
+  scale_y_continuous(limits = c(15, 45), breaks = seq(15, 45, by = 5)) +
+  scale_x_discrete(labels = c(expression("B"["1-10"]), expression("O"["1-10"]))) +
+  theme_bw() +
+  labs(
+    title = "Mean population longevity - generation 12",
+    x = NULL,
+    y = "Longevity (days)"
+  ) +
+  theme(#axis.ticks.x = element_blank(),
+    #axis.text.x = element_blank(),
+    legend.position = "none") +
+  facet_wrap(~Sex) +
+  stat_compare_means(comparisons = list(c("B-type", "O-type")), label = "p.format", method = "t.test")
+
+
+
+longevity_boxplots_anc_gen12 <- ggplot(calc_df, aes(x = Treatment, y = mean_pop_longevity, fill = Regime)) +
+  geom_boxplot(width = 0.6, aes(group = Treatment)) +
+  scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
+  scale_y_continuous(limits = c(15, 45), breaks = seq(15, 45, by = 5)) +
+  scale_x_discrete(labels = c(expression("OBO"["1-5"]),
+                              expression("OB"["1-5"]),
+                              expression("nBO"["1-5"]),
+                              expression("nB"["1-5"]))) +
+  theme_bw() +
+  labs(
+    title = "Mean population longevity - generation 12",
+    x = NULL,
+    y = "Longevity (days)"
+  ) +
+  theme(#axis.ticks.x = element_blank(),
+    #axis.text.x = element_blank(),
+    legend.position = "none") +
+  facet_wrap(~Sex) +
+  stat_compare_means(comparisons = list(
+    c(1, 2),
+    c(3, 4)),
+    label = "p.format",
+    method = "t.test",
+    label.y = 40)
+
+
+# Statistical analysis
+# Difference in population mean longevity
+lm_fit_longevity <- lm(mean_pop_longevity ~ Regime + Ancestry + Sex + Regime:Ancestry, data = calc_df)
+summary(lm_fit_longevity)
+
+
+
+

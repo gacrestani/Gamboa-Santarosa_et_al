@@ -1,5 +1,6 @@
 library(readxl)
 library(tidyverse)
+library(ggpubr)
 
 input_df <- read_excel("data/phenotypic_data/raw/Longevity Gen 20.xlsx") %>%
   select(-sign, -Notes)
@@ -49,33 +50,67 @@ calc_df <- summary_df %>%
     )
   )
 
-createPlot <- function(ancestry = FALSE) {
-  p <- ggplot(calc_df, aes(x = Sex, y = mean_pop_longevity, fill = Regime)) +
-    geom_boxplot(outlier.shape = NA, width = 0.6) +
-    scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
-    theme_bw() +
-    labs(
-      #title = "Longevity",
-      x = NULL,
-      y = "Longevity (days)"
-    ) +
-    theme(legend.position = "none") 
-  
-  if (ancestry) {
-    p <- p + facet_grid(~Ancestry)
-  }
-  
-  p <- p + stat_compare_means(aes(group = Regime), label = "p.signif", method = "t.test")
-  
-  return(p)
-}
+calc_df$Treatment <- factor(calc_df$Treatment, levels = c("OBO",
+                                                          "OB",
+                                                          "nBO",
+                                                          "nB"))
 
-longevity_boxplots <- createPlot()
-longevity_boxplots_anc <- createPlot(ancestry = TRUE)
+# stat.test <- calc_df %>%
+#   t.test(mean_pop_longevity ~ Regime) %>%
 
-longevity_boxplots 
+
+# PLOTS
+longevity_boxplots <- ggplot(calc_df, aes(x = Regime, y = mean_pop_longevity, fill = Regime)) +
+  geom_boxplot(width = 0.6) +
+  scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
+  scale_y_continuous(limits = c(28, 80), breaks = seq(30, 80, by = 10)) +
+  scale_x_discrete(labels = c(expression("B"["1-10"]), expression("O"["1-10"]))) +
+  theme_bw() +
+  labs(
+    title = "Mean population longevity",
+    x = NULL,
+    y = "Longevity (days)"
+  ) +
+  theme(#axis.ticks.x = element_blank(),
+        #axis.text.x = element_blank(),
+        legend.position = "none") +
+  facet_wrap(~Sex) +
+  stat_compare_means(comparisons = list(c("B-type", "O-type")), label = "p.signif", method = "t.test", label.y = 72)
+
+longevity_boxplots
+
+
+
+longevity_boxplots_anc <- ggplot(calc_df, aes(x = Treatment, y = mean_pop_longevity, fill = Regime)) +
+  geom_boxplot(width = 0.6, aes(group = Treatment)) +
+  scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
+  scale_y_continuous(limits = c(28, 80), breaks = seq(30, 80, by = 10)) +
+  scale_x_discrete(labels = c(expression("OBO"["1-5"]),
+                              expression("OB"["1-5"]),
+                              expression("nBO"["1-5"]),
+                              expression("nB"["1-5"]))) +
+  theme_bw() +
+  labs(
+    title = "Mean population longevity",
+    x = NULL,
+    y = "Longevity (days)"
+  ) +
+  theme(#axis.ticks.x = element_blank(),
+    #axis.text.x = element_blank(),
+    legend.position = "none") +
+  facet_wrap(~Sex) +
+  stat_compare_means(comparisons = list(
+    c(1, 2),
+    c(3, 4)),
+    label = "p.format",
+    method = "t.test",
+    label.y = 70)
+
 longevity_boxplots_anc
+
 # Statistical analysis
 # Difference in population mean longevity
-lm_fit_longevity <- lm(mean_pop_longevity ~ Regime + Ancestry + Sex, data = calc_df)
+lm_fit_longevity <- lm(mean_pop_longevity ~ Regime*Ancestry + Sex, data = calc_df)
 summary(lm_fit_longevity)
+
+confint(lm_fit_longevity)

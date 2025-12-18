@@ -44,16 +44,20 @@ calc_df <- summary_df %>%
       grepl("CB|CBO", Population) ~ "B-type",
       TRUE ~ NA_character_
     ),
+    Sex = case_when(
+      grepl("F", Sex) ~ "Female",
+      grepl("M", Sex) ~ "Male"
+    ),
     Ancestry = case_when(
       grepl("EBO|CBO", Population) ~ "BO",
       grepl("EB|CB", Population) ~ "B",
       TRUE ~ NA_character_
     ),
     Treatment = case_when(
-      grepl("EB", Population) ~ "EB",
-      grepl("EBO", Population) ~ "EBO",
-      grepl("CB", Population) ~ "CB",
-      grepl("CBO", Population) ~ "CBO",
+      grepl("EB[1-9]", Population) ~ "OB",
+      grepl("EBO", Population) ~ "OBO",
+      grepl("CB[1-9]", Population) ~ "nB",
+      grepl("CBO", Population) ~ "nBO",
       TRUE ~ NA_character_
     ),
     Replicate = as.factor(gsub("\\D", "", Population)),
@@ -61,31 +65,62 @@ calc_df <- summary_df %>%
     Regime = factor(Regime)
   )
 
-createPlot <- function(ancestry = FALSE) {
-  p <- ggplot(calc_df, aes(x = Sex, y = avg_survival, fill = Regime)) +
-    geom_boxplot(outlier.shape = NA, width = 0.6) +
-    scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
-    labs(
-      title = "Desiccation resistance",
-      x = NULL,
-      y = "Survival (hours)"
-    ) +
-    theme_bw() +
-    theme(
-      legend.position = "none"
-    )
-  
-  if (ancestry) {
-    p <- p + facet_grid(~Ancestry)
-  }
-  
-  return(p)
-}
+calc_df$Treatment <- factor(calc_df$Treatment, levels = c("OBO",
+                                                          "OB",
+                                                          "nBO",
+                                                          "nB"))
 
-desiccation_boxplots <- createPlot()
-desiccation_boxplots_anc <- createPlot(ancestry = TRUE)
+
+# PLOTS
+
+desiccation_boxplots <- ggplot(calc_df, aes(x = Regime, y = avg_survival, fill = Regime)) +
+  geom_boxplot(width = 0.6) +
+  scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
+  scale_y_continuous(limits = c(5, 22), breaks = seq(10, 20, by = 5)) +
+  scale_x_discrete(labels = c(expression("B"["1-10"]), expression("O"["1-10"]))) +
+  labs(
+    title = "Mean population desiccation resistance",
+    x = NULL,
+    y = "Survival (hours)"
+  ) +
+  theme_bw() +
+  theme(#axis.ticks.x = element_blank(),
+        #axis.text.x = element_blank(),
+        legend.position = "none") +
+  facet_wrap(~Sex) +
+  stat_compare_means(comparisons = list(c("B-type", "O-type")), label = "p.signif", method = "t.test")
+
+desiccation_boxplots_anc <- ggplot(calc_df, aes(x = Treatment, y = avg_survival, fill = Regime)) +
+  geom_boxplot(width = 0.6, aes(group = Treatment)) +
+  scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
+  scale_y_continuous(limits = c(5, 22), breaks = seq(10, 20, by = 5)) +
+  scale_x_discrete(labels = c(expression("OBO"["1-5"]),
+                              expression("OB"["1-5"]),
+                              expression("nBO"["1-5"]),
+                              expression("nB"["1-5"]))) +
+  
+  labs(
+    title = "Mean population desiccation resistance",
+    x = NULL,
+    y = "Survival (hours)"
+  ) +
+  theme_bw() +
+  theme(#axis.ticks.x = element_blank(),
+    #axis.text.x = element_blank(),
+    legend.position = "none") +
+  facet_wrap(~Sex) +
+  stat_compare_means(comparisons = list(
+    c(1, 2),
+    c(3, 4)),
+    label = "p.format",
+    method = "t.test",
+    label.y = 20)
+
+desiccation_boxplots_anc
 
 
 # Statistical analysis
-lm_fit_desiccation <- lm(avg_survival ~ Regime + Sex + Ancestry, data = calc_df)
+lm_fit_desiccation <- lm(avg_survival ~ Regime * Ancestry + Sex, data = calc_df)
 summary(lm_fit_desiccation)
+
+confint(lm_fit_desiccation)

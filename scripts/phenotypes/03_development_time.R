@@ -1,12 +1,16 @@
 library(readxl)
 library(tidyverse)
 
-input_df <- read_excel("data/phenotypic_data/raw/Development Time Gen 20.xlsx", skip = 1, col_types = "text") %>%
+path <- "data/phenotypic_data/raw/Development Time Gen 20.xlsx"
+
+input_df <- read_excel(path, na = "-", skip = 1, col_types = "text") %>%
   select(-Notes)
+
+hours <- as.numeric(read_excel(path, col_names = F)[1,])
+hours <- hours[!is.na(hours)]
 
 input_df[] <- lapply(input_df, as.character)
 
-hours <- seq(from = 6 + 189.6, to = 204 + 189.6, by = 6)
 colnames(input_df) <- c("Population", "Vials", "Sex", paste0("t", hours))
 
 input_df[input_df == "-"] <- NA
@@ -33,38 +37,81 @@ calc_df <- summary_df %>%
       grepl("CBO|CB", Population) ~ "B-type",
       TRUE ~ NA_character_
     ),
+    Sex = case_when(
+      grepl("F", Sex) ~ "Female",
+      grepl("M", Sex) ~ "Male"
+    ),
     Ancestry = case_when(
       grepl("EBO|CBO", Population) ~ "BO",
       grepl("EB|CB", Population) ~ "B",
       TRUE ~ NA_character_
+    ),
+    Treatment = case_when(
+      grepl("EB[1-9]", Population) ~ "OB",
+      grepl("EBO", Population) ~ "OBO",
+      grepl("CB[1-9]", Population) ~ "nB",
+      grepl("CBO", Population) ~ "nBO",
+      TRUE ~ NA_character_
     )
   )
 
-createPlot <- function(ancestry = FALSE) {
-  p <- ggplot(calc_df, aes(x = Sex, y = average, fill = Regime)) +
-    geom_boxplot(outlier.shape = NA, width = 0.6) +
-    scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
-    theme_bw() +
-    scale_y_continuous(limits = c(210, 270), breaks = seq(210, 270, by = 20)) +
-    labs(
-      #title = "Mean development time",
-      x = NULL,
-      y = "Mean development time (hours)"
-    ) +
-    theme(legend.position = "none")
-  
-  if (ancestry) {
-    p <- p + facet_grid(~Ancestry)
-  }
-  
-  p <- p + stat_compare_means(aes(group = Regime), label = "p.signif", method = "t.test")
-  
-  return(p)
-}
+calc_df$Treatment <- factor(calc_df$Treatment, levels = c("OBO",
+                                                          "OB",
+                                                          "nBO",
+                                                          "nB"))
 
-devtime_boxplots <- createPlot()
-devtime_boxplots_anc <- createPlot(ancestry = TRUE)
+# PLOTS
+
+devtime_boxplots <- ggplot(calc_df, aes(x = Regime, y = average, fill = Regime)) +
+  geom_boxplot(outlier.shape = NA, width = 0.6) +
+  scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
+  theme_bw() +
+  scale_y_continuous(limits = c(210, 280), breaks = seq(210, 270, by = 20)) +
+  scale_x_discrete(labels = c(expression("B"["1-10"]), expression("O"["1-10"]))) +
+  labs(
+    title = "Mean population development time",
+    x = NULL,
+    y = "Mean development time (hours)"
+  ) +
+  theme(#axis.ticks.x = element_blank(),
+    #axis.text.x = element_blank(),
+    legend.position = "none") +
+  facet_wrap(~Sex) +
+  stat_compare_means(comparisons = list(c("B-type", "O-type")), label = "p.signif", method = "t.test", label.y = 266)
+
+devtime_boxplots
+
+devtime_boxplots_anc <- ggplot(calc_df, aes(x = Treatment, y = average, fill = Regime)) +
+  geom_boxplot(width = 0.6, aes(group = Treatment)) +
+  scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
+  scale_y_continuous(limits = c(210, 280), breaks = seq(210, 270, by = 20)) +
+  scale_x_discrete(labels = c(expression("OBO"["1-5"]),
+                              expression("OB"["1-5"]),
+                              expression("nBO"["1-5"]),
+                              expression("nB"["1-5"]))) +
+  theme_bw() +
+  labs(
+    title = "Mean population development time",
+    x = NULL,
+    y = "Mean development time (hours)"
+  ) +
+  theme(#axis.ticks.x = element_blank(),
+    #axis.text.x = element_blank(),
+    legend.position = "none") +
+  facet_wrap(~Sex) +
+  stat_compare_means(comparisons = list(
+    c(1, 2),
+    c(3, 4)),
+    label = "p.format",
+    method = "t.test",
+    label.y = 270)
+
+
+devtime_boxplots_anc
 
 # Statistican analysis
-lm_fit_devtime <- lm(average ~ Regime + Ancestry + Sex, data = calc_df)
+lm_fit_devtime <- lm(average ~ Regime * Ancestry + Sex , data = calc_df)
 summary(lm_fit_devtime)
+
+confint(lm_fit_devtime)
+

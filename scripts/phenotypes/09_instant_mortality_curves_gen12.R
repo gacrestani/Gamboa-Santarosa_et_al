@@ -45,7 +45,12 @@ rate_df <- compute_log_mortality(summary_df[3:ncol(summary_df)]) %>%
       TRUE ~ NA_character_
     ),
     Sample = rownames(.)
-  )
+  ) %>%
+  mutate(
+    Sex = case_when(
+      grepl("F", Sex) ~ "Female",
+      grepl("M", Sex) ~ "Male")
+    )
 
 long_df <- rate_df %>%
   pivot_longer(
@@ -63,7 +68,7 @@ createPlot <- function(ancestry = FALSE) {
     scale_color_manual(values = c("O-type" = "#377EB8", "B-type" = "#E43A3F")) +
     theme_bw() +
     labs(
-      title = "Instantaneous mortality over time",
+      title = "Instantaneous mortality over time - generation 12",
       x = "Day",
       y = "Log mortality rate"
     ) +
@@ -81,3 +86,50 @@ createPlot <- function(ancestry = FALSE) {
 mortality_curves_gen12 <- createPlot()
 mortality_curves_anc_gen12 <- createPlot(ancestry = TRUE)
 
+# Statistical analysis
+# Cox proportional hazards model
+library(survival)
+library(survminer)
+
+input_df$N <- rowSums(input_df[3:ncol(input_df)])
+input_df$Population <- str_remove(input_df$Cage, " \\(.*\\)")
+input_df$Cage <- str_extract(input_df$Cage, "(?<=\\().+?(?=\\))")
+
+input_df <- input_df %>% mutate(
+  Regime = case_when(
+    grepl("EB|EBO", Population) ~ "O-type",
+    grepl("CB|CBO", Population) ~ "B-type",
+    TRUE ~ NA_character_
+  ),
+  Sex = Sex,
+  Replicate = as.factor(gsub("\\D", "", Population)),
+  Treatment = case_when(
+    grepl("EB", Population) ~ "EB",
+    grepl("EBO", Population) ~ "EBO",
+    grepl("CB", Population) ~ "CB",
+    grepl("CBO", Population) ~ "CBO",
+    TRUE ~ NA_character_
+  ),
+  Ancestry = case_when(
+    grepl("CBO|EBO", Population) ~ "BO",
+    grepl("CB|EB", Population) ~ "B",
+    TRUE ~ NA_character_
+  )
+)
+
+long_input_df <- input_df %>%
+  pivot_longer(cols = starts_with("d"), names_to = "Day", values_to = "Dead") %>%
+  mutate(Day = as.numeric(str_remove(Day, "d")))
+
+dead_flies <- long_input_df %>%
+  filter(Dead > 0) %>%
+  uncount(Dead) %>%
+  mutate(status = 1) %>% # Dead : status = 1
+  select(Cage, Sex, Regime, Ancestry, Replicate, Day, status)
+
+
+cox_model <- coxph(Surv(Day, status) ~ Regime + Ancestry + Sex, data = dead_flies)
+cox.zph(cox_model) # Proportionality is violated
+
+cox_model <- coxph(Surv(Day, status) ~ tt(Regime) + tt(Ancestry) + tt(Sex), data = dead_flies)
+summary(cox_model)

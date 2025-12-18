@@ -36,7 +36,8 @@ pca_plot <- ggplot(
   geom_point(size=3, alpha=0.75) +
   xlab(paste0("PC1 - ", as.character(pca_data$variance_percentage[1]), "%")) +
   ylab(paste0("PC2 - ", as.character(pca_data$variance_percentage[2]), "%")) +
-  scale_color_manual(values = c("red","darkred","blue","darkblue")) +
+  scale_color_manual(values = c("#003F88", "#4F9DF2",      
+                                "#8E0000", "#FF3B30")) +
   theme_bw() +
   stat_ellipse(aes(group = Cluster), level=0.95, linetype = 2)
 
@@ -46,7 +47,7 @@ pca_data <- pca_data %>%
            apply(1, paste, collapse = "_"))
 
 treatment_order <- c("OBO", "OB", "nBO", "nB")
-treatment_colors <- c("OBO" = "darkblue", "OB" = "blue", "nBO" = "darkred", "nB" = "red")
+treatment_colors <- c("OBO" = "#003F88", "OB" = "#4F9DF2", "nBO" = "#8E0000", "nB" = "#FF3B30")
 
 pc1 <- ggplot(pca_data, aes(x = Generation, y = X, group = Treatment_Rep, color = Treatment)) +
   geom_line(alpha = 0.7) +

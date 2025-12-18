@@ -33,7 +33,7 @@ input_df <- map_dfr(sheets, read_and_reshape) %>%
   separate(vial, into = c("Population", "Vial"), sep = "-") %>%
   mutate(eggs = suppressWarnings(as.numeric(eggs)))
 
-summary_df <- input_df %>%
+calc_df <- input_df %>%
   group_by(Population) %>%
   summarise(mean_eggs = mean(eggs, na.rm = TRUE), .groups = "drop") %>%
   mutate(
@@ -50,69 +50,116 @@ summary_df <- input_df %>%
     ),
     Replicate = as.factor(gsub("\\D", "", Population)),
     Treatment = case_when(
-      grepl("EB", Population) ~ "EB",
-      grepl("EBO", Population) ~ "EBO",
-      grepl("CB", Population) ~ "CB",
-      grepl("CBO", Population) ~ "CBO",
+      grepl("EB[1-9]", Population) ~ "OB",
+      grepl("EBO", Population) ~ "OBO",
+      grepl("CB[1-9]", Population) ~ "nB",
+      grepl("CBO", Population) ~ "nBO",
       TRUE ~ NA_character_
     )
   )
 
-calc_df <- summary_df
+calc_df$Treatment <- factor(calc_df$Treatment, levels = c("OBO",
+                                                          "OB",
+                                                          "nBO",
+                                                          "nB"))
 
-createPlot <- function(ancestry = FALSE) {
-  p <- ggplot(calc_df, aes(x = Regime, y = eggs_average_per_female, fill = Regime)) +
-    geom_boxplot(outlier.shape = NA, width = 0.6) +
-    scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
-    labs(
-      #title = "Fecundity",
-      x = NULL,
-      y = "Average egg count per female"
-    ) +
-    theme_bw() +
-    theme(
-      legend.position = "none"
-    )
-  
-  if (ancestry) {
-    p <- p + facet_grid(~Ancestry)
-  }
-  
-  p <- p + stat_compare_means(comparisons = list(c("B-type", "O-type")), label = "p.signif", method = "t.test")
-  
-  return(p)
-}
 
-fecundity_boxplots <- createPlot()
-fecundity_boxplots_anc <- createPlot(ancestry = TRUE)
+
+# PLOTS
+
+fecundity_boxplots <- ggplot(calc_df, aes(x = Regime, y = mean_eggs, fill = Regime)) +
+  geom_boxplot(width = 0.6) +
+  scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
+  scale_y_continuous(limits = c(90, 190), breaks = seq(90, 190, by = 20)) +
+  scale_x_discrete(labels = c(expression("B"["1-10"]), expression("O"["1-10"]))) +
+  theme_bw() +
+  labs(
+    title = "Mean population fecundity",
+    x = NULL,
+    y = "Egg count"
+  ) +
+  theme(#axis.ticks.x = element_blank(),
+        #axis.text.x = element_blank(),
+        legend.position = "none") +
+  stat_compare_means(comparisons = list(c("B-type", "O-type")), label = "p.signif", method = "t.test", label.y = 170)
 
 fecundity_boxplots
 
+fecundity_boxplots_anc <- ggplot(calc_df, aes(x = Treatment, y = mean_eggs, fill = Regime)) +
+  geom_boxplot(width = 0.6, aes(group = Treatment)) +
+  scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
+  scale_y_continuous(limits = c(90, 190), breaks = seq(90, 190, by = 20)) +
+  scale_x_discrete(labels = c(expression("OBO"["1-5"]),
+                              expression("OB"["1-5"]),
+                              expression("nBO"["1-5"]),
+                              expression("nB"["1-5"]))) +
+  theme_bw() +
+  labs(
+    title = "Mean population fecundity",
+    x = NULL,
+    y = "Egg count"
+  ) +
+  theme(#axis.ticks.x = element_blank(),
+    #axis.text.x = element_blank(),
+    legend.position = "none") +
+  stat_compare_means(comparisons = list(
+    c(1, 2),
+    c(3, 4)),
+    label = "p.format",
+    method = "t.test",
+    label.y = 180)
 
-# LM with measurements as data points
-input_df2 <- input_df %>%
-  mutate(
-    Regime = case_when(
-      grepl("EB|EBO", Population) ~ "O-type",
-      grepl("CB|CBO", Population) ~ "B-type",
-      TRUE ~ NA_character_
-    ),
-    Ancestry = case_when(
-      grepl("EBO|CBO", Population) ~ "BO",
-      grepl("EB|CB", Population) ~ "B",
-      TRUE ~ NA_character_
-    ),
-    Replicate = as.factor(gsub("\\D", "", Population)),
-    Treatment = case_when(
-      grepl("EB", Population) ~ "EB",
-      grepl("EBO", Population) ~ "EBO",
-      grepl("CB", Population) ~ "CB",
-      grepl("CBO", Population) ~ "CBO",
-      TRUE ~ NA_character_
-    )
-  )
+fecundity_boxplots_anc
 
 
 # Statistical analysis
-lm_fit_fecundity <- glm(eggs ~ Regime + Ancestry, family = poisson, data = input_df2)
+lm_fit_fecundity <- glm(mean_eggs ~ Regime * Ancestry, family = poisson, data = calc_df)
 summary(lm_fit_fecundity)
+
+confint(lm_fit_fecundity)
+
+
+
+
+# 
+# # CURVES
+# curves_df <- input_df
+# curves_df$sheet <- as.numeric(factor(curves_df$sheet, levels = unique(sheets)))
+# curves_df <- curves_df %>%
+#   mutate(
+#     Regime = case_when(
+#       grepl("EB|EBO", Population) ~ "O-type",
+#       grepl("CB|CBO", Population) ~ "B-type",
+#       TRUE ~ NA_character_
+#     ),
+#     Ancestry = case_when(
+#       grepl("EBO|CBO", Population) ~ "BO",
+#       grepl("EB|CB", Population) ~ "B",
+#       TRUE ~ NA_character_
+#     ),
+#     Replicate = as.factor(gsub("\\D", "", Population)),
+#     Treatment = case_when(
+#       grepl("EB[1-9]", Population) ~ "OB",
+#       grepl("EBO", Population) ~ "OBO",
+#       grepl("CB[1-9]", Population) ~ "nB",
+#       grepl("CBO", Population) ~ "nBO",
+#       TRUE ~ NA_character_
+#     ),
+#     eggs_per_female = eggs / 4
+#   )
+# 
+# 
+# 
+# cuves_plot <- ggplot(curves_df, aes(x = sheet, y = eggs_per_female, group = Population, color = Replicate)) +
+#   geom_point(alpha = 0.7) +
+#   #scale_color_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
+#   #scale_x_continuous(breaks = seq(1, length(sheets), by = 2), labels = seq(1, length(sheets), by = 2)) +
+#   labs(
+#     title = "Fecundity curves",
+#     x = "Day",
+#     y = "Egg count"
+#   ) +
+#   theme_bw() +
+#   theme(legend.position = "top") +
+#   facet_wrap(. ~ Ancestry + Regime)
+# 

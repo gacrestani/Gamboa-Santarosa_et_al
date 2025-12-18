@@ -1,7 +1,6 @@
 source("scripts/utils.R")
 library(org.Dm.eg.db)
 library(TxDb.Dmelanogaster.UCSC.dm6.ensGene)
-library(VariantAnnotation)
 library(clusterProfiler)
 library(biomaRt)
 
@@ -18,47 +17,25 @@ rm(all_cmh)
 rm(snp_table)
 
 # Choose which comparison you will focus on
-column <- snp_table_cmh$adapted_o20_vs_o01_fdr
+column <- snp_table_cmh$classical_o20_vs_b56_fdr
 
-threshold <- 1e-100
-#threshold <- quantile(column, 0.001)
+#threshold <- 1e-100
+threshold <- quantile(column, 0.001)
 
 significant_snp_table <- snp_table_cmh[which(column < threshold),]
 
-mycords_df <- significant_snp_table[c("CHROM", "POS", "REF", "ALT")]
-mycords_df$CHROM <- paste0("chr", mycords_df$CHROM)
+mycords <- significant_snp_table[c("CHROM", "POS")]
+mycords$CHROM <- paste0("chr", mycords$CHROM)
 
-mycords_df <- 
-  mycords_df %>%
-  mutate(chrom=CHROM, start=POS, end=POS, ref=REF, alt=ALT) %>%
-  dplyr::select(chrom, start, end, ref, alt)
+mycords <- 
+  mycords %>%
+  mutate(chrom=CHROM, start=POS, end=POS) %>%
+  dplyr::select(chrom, start, end) %>%
+  makeGRangesFromDataFrame()
 
-rownames(mycords_df) <- paste0(mycords_df$chrom, ":", mycords_df$start, "-", mycords_df$end)
-
-sig_snps <- GRanges(seqnames = mycords_df$chrom,
-                    ranges = IRanges(start = mycords_df$start, end = mycords_df$end),
-                    strand = "*",
-                    ref = mycords_df$ref,
-                    alt = mycords_df$alt)
-
-
-subset <- subsetByOverlaps(genes(TxDb.Dmelanogaster.UCSC.dm6.ensGene), sig_snps)
+subset <- subsetByOverlaps(genes(TxDb.Dmelanogaster.UCSC.dm6.ensGene), mycords)
 genes <- as.data.frame(subset)
 genes$symbol <- mapIds(org.Dm.eg.db, keys = genes$gene_id, column = "SYMBOL", keytype = "ENSEMBL")
-
-# Annotate significant SNPs
-loc_annotation <- locateVariants(query = sig_snps,
-                                 subject = TxDb.Dmelanogaster.UCSC.dm6.ensGene,
-                                 region = AllVariants())
-annotation <- as.data.frame(loc_annotation)
-
-list_columns <- sapply(annotation, is.list)
-annotation[list_columns] <- lapply(annotation[list_columns], function(col) {
-  sapply(col, paste, collapse = ";")
-})
-
-
-
 
 # Done capturing genes. Now let's do the GO enrichment analysis
 ensembl <- useEnsembl(biomart = "genes", dataset = "dmelanogaster_gene_ensembl")
@@ -102,22 +79,19 @@ go_results_df <- as.data.frame(go_results)
 
 simple_go_results <- simplify(go_results)
 simple_go_results_df <- as.data.frame(simple_go_results)
-dotplot <- dotplot(simple_go_results, showCategory = 21) + ggtitle("GO Enrichment Analysis - non-redundant terms")
+dotplot <- dotplot(simple_go_results, showCategory = 21) + ggtitle("GO Enrichment Analysis - O1-10 vs B1-10")
 
 # Save outputs
 
 # Gene list
-write.table(gene_list_result, file = "results/significant_genes.csv", sep = "\t", row.names = FALSE, quote = FALSE)
+write.table(genes, file = "results/significant_genes.csv", sep = ",", row.names = FALSE, quote = FALSE)
 
 # GO results
-write.table(go_results_df, file = "results/go_enrichment_results.csv", sep = "\t", row.names = FALSE, quote = FALSE)
-
-# Annotation
-write.table(annotation, file = "results/significant_snp_annotations.csv", sep = "\t", row.names = FALSE, quote = FALSE)
+write.table(go_results_df, file = "results/go_enrichment_results.csv", sep = ",", row.names = FALSE, quote = FALSE)
 
 # Save dotplot
 ggsave(
-  "results/go_enrichment_dotplot.png",
+  "results/go_enrichment_dotplot_o_vs_b.png",
   dotplot,
   width = 8,
   height = 11,

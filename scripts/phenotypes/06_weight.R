@@ -16,16 +16,20 @@ summary_df <- input_df %>%
       grepl("CB|CBO", `Population Replicates`) ~ "B-type",
       TRUE ~ NA_character_
     ),
+    Sex = case_when(
+      grepl("F", Sex) ~ "Female",
+      grepl("M", Sex) ~ "Male"
+    ),
     Ancestry = case_when(
       grepl("EBO|CBO", `Population Replicates`) ~ "BO",
       grepl("EB|CB", `Population Replicates`) ~ "B",
       TRUE ~ NA_character_
     ),
     Treatment = case_when(
-      grepl("EB", `Population Replicates`) ~ "EB",
-      grepl("EBO", `Population Replicates`) ~ "EBO",
-      grepl("CB", `Population Replicates`) ~ "CB",
-      grepl("CBO", `Population Replicates`) ~ "CBO",
+      grepl("EB[1-9]", `Population Replicates`) ~ "OB",
+      grepl("EBO", `Population Replicates`) ~ "OBO",
+      grepl("CB[1-9]", `Population Replicates`) ~ "nB",
+      grepl("CBO", `Population Replicates`) ~ "nBO",
       TRUE ~ NA_character_
     ),
     Replicate = as.factor(gsub("\\D", "", `Population Replicates`)),
@@ -41,31 +45,64 @@ calc_df <- summary_df %>%
     Sex = factor(Sex)
   )
 
-createPlot <- function(ancestry = FALSE) {
-  p <- ggplot(calc_df, aes(x = Sex, y = wet_weight, fill = Regime)) +
-    geom_boxplot(outlier.shape = NA, width = 0.6) +
-    scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
-    labs(
-      title = "Weight",
-      x = NULL,
-      y = "Weight (mg)"
-    ) +
-    theme_bw() +
-    theme(
-      legend.position = "none"
-    )
-  
-  if (ancestry) {
-    p <- p + facet_grid(~ Ancestry)
-  }
-  
-  return(p)
-}
+calc_df$Treatment <- factor(calc_df$Treatment, levels = c("OBO",
+                                                          "OB",
+                                                          "nBO",
+                                                          "nB"))
 
-weight_boxplots <- createPlot()
-weight_boxplots_anc <- createPlot(ancestry = TRUE)
+
+
+# PLOTS
+weight_boxplots <- ggplot(calc_df, aes(x = Regime, y = wet_weight, fill = Regime)) +
+  geom_boxplot(outlier.shape = NA, width = 0.6) +
+  scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
+  scale_y_continuous(limits = c(5, 15), breaks = seq(5, 12.5, by = 2.5)) +
+  scale_x_discrete(labels = c(expression("B"["1-10"]), expression("O"["1-10"]))) +
+  labs(
+    title = "Mean population weight",
+    x = NULL,
+    y = "Weight (mg)"
+  ) +
+  theme_bw() +
+  theme(#axis.ticks.x = element_blank(),
+        #axis.text.x = element_blank(),
+        legend.position = "none") +
+  facet_wrap(~Sex) +
+  stat_compare_means(comparisons = list(c("B-type", "O-type")), label = "p.signif", method = "t.test")
+
+
+weight_boxplots
+
+weight_boxplots_anc <- ggplot(calc_df, aes(x = Treatment, y = wet_weight, fill = Regime)) +
+  geom_boxplot(width = 0.6, aes(group = Treatment)) +
+  scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
+  scale_y_continuous(limits = c(5, 14), breaks = seq(6, 12, by = 2)) +
+  scale_x_discrete(labels = c(expression("OBO"["1-5"]),
+                              expression("OB"["1-5"]),
+                              expression("nBO"["1-5"]),
+                              expression("nB"["1-5"]))) +
+  labs(
+    title = "Mean population weight",
+    x = NULL,
+    y = "Weight (mg)"
+  ) +
+  theme_bw() +
+  theme(#axis.ticks.x = element_blank(),
+    #axis.text.x = element_blank(),
+    legend.position = "none") +
+  facet_wrap(~Sex) +
+  stat_compare_means(comparisons = list(
+    c(1, 2),
+    c(3, 4)),
+    label = "p.format",
+    method = "t.test",
+    label.y = 13)
+
+
+weight_boxplots_anc
 
 # Anova test
-lm_fit_weight <- lm(wet_weight ~ Regime * Sex * Ancestry, data = calc_df)
+lm_fit_weight <- lm(wet_weight ~ Regime * Ancestry + Sex, data = calc_df)
 summary(lm_fit_weight)
 
+confint(lm_fit_weight)
