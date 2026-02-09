@@ -92,7 +92,7 @@ immune_defense_boxplots <- ggplot(calc_df, aes(x = Group, y = death_percentage, 
                               "O-type_Infected" = expression("O"["1-10"]))) +
   theme_bw() +
   labs(
-    title = "Mean population death percentage",
+    title = "Immune defense",
     x = NULL,
     y = "Death percentage"
   ) +
@@ -201,7 +201,7 @@ immune_defense_boxplots_anc <- ggplot(calc_df, aes(x = Group_anc, y = death_perc
                expression("nB"["1-5"]))) +
   theme_bw() +
   labs(
-    title = "Mean population death percentage",
+    title = "Immune defense",
     x = NULL,
     y = "Death percentage"
   ) +

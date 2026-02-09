@@ -74,7 +74,7 @@ fecundity_boxplots <- ggplot(calc_df, aes(x = Regime, y = mean_eggs, fill = Regi
   scale_x_discrete(labels = c(expression("B"["1-10"]), expression("O"["1-10"]))) +
   theme_bw() +
   labs(
-    title = "Mean population fecundity",
+    title = "Lifetime fecundity",
     x = NULL,
     y = "Egg count"
   ) +
@@ -95,7 +95,7 @@ fecundity_boxplots_anc <- ggplot(calc_df, aes(x = Treatment, y = mean_eggs, fill
                               expression("nB"["1-5"]))) +
   theme_bw() +
   labs(
-    title = "Mean population fecundity",
+    title = "Lifetime fecundity",
     x = NULL,
     y = "Egg count"
   ) +

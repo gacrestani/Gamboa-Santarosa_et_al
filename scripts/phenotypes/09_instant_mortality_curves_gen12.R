@@ -68,7 +68,7 @@ createPlot <- function(ancestry = FALSE) {
     scale_color_manual(values = c("O-type" = "#377EB8", "B-type" = "#E43A3F")) +
     theme_bw() +
     labs(
-      title = "Instantaneous mortality over time - generation 12",
+      title = "Age-specific mortality rate - generation 12",
       x = "Day",
       y = "Log mortality rate"
     ) +

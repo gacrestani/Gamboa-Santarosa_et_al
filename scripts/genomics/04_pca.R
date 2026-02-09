@@ -22,6 +22,7 @@ pca_data$Cluster <- as.factor(clustering_result$cluster)
 
 pca_data$Generation <- gsub(".*_(gen\\d+)", "\\1", pca_data$sample)
 pca_data$Generation <- gsub("gen", "", pca_data$Generation)
+pca_data$Generation <- gsub("01", "1", pca_data$Generation)
 pca_data$Generation <- gsub("20|56", "20|56", pca_data$Generation)
 
 pca_data$Treatment <- gsub("_gen..", "", pca_data$Population)

@@ -69,9 +69,9 @@ devtime_boxplots <- ggplot(calc_df, aes(x = Regime, y = average, fill = Regime))
   scale_y_continuous(limits = c(210, 280), breaks = seq(210, 270, by = 20)) +
   scale_x_discrete(labels = c(expression("B"["1-10"]), expression("O"["1-10"]))) +
   labs(
-    title = "Mean population development time",
+    title = "Development time",
     x = NULL,
-    y = "Mean development time (hours)"
+    y = "Dev. time (hours)"
   ) +
   theme(#axis.ticks.x = element_blank(),
     #axis.text.x = element_blank(),
@@ -91,9 +91,9 @@ devtime_boxplots_anc <- ggplot(calc_df, aes(x = Treatment, y = average, fill = R
                               expression("nB"["1-5"]))) +
   theme_bw() +
   labs(
-    title = "Mean population development time",
+    title = "Development time",
     x = NULL,
-    y = "Mean development time (hours)"
+    y = "Dev. time (hours)"
   ) +
   theme(#axis.ticks.x = element_blank(),
     #axis.text.x = element_blank(),

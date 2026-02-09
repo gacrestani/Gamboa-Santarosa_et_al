@@ -68,9 +68,9 @@ devtime_boxplots_gen14 <- ggplot(calc_df, aes(x = Regime, y = average, fill = Re
   scale_y_continuous(limits = c(180, 260), breaks = seq(180, 260, by = 20)) +
   scale_x_discrete(labels = c(expression("B"["1-10"]), expression("O"["1-10"]))) +
   labs(
-    title = "Mean pop. dev. time - generation 14",
+    title = "Development time - generation 14",
     x = NULL,
-    y = "Mean development time (hours)"
+    y = "Dev. time (hours)"
   ) +
   theme(#axis.ticks.x = element_blank(),
     #axis.text.x = element_blank(),
@@ -90,9 +90,9 @@ devtime_boxplots_anc_gen14 <- ggplot(calc_df, aes(x = Treatment, y = average, fi
                               expression("nB"["1-5"]))) +
   theme_bw() +
   labs(
-    title = "Mean pop. dev. time - generation 14",
+    title = "Development time - generation 14",
     x = NULL,
-    y = "Mean development time (hours)"
+    y = "Dev. time (hours)"
   ) +
   theme(#axis.ticks.x = element_blank(),
     #axis.text.x = element_blank(),

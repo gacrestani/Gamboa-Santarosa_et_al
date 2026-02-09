@@ -64,7 +64,7 @@ longevity_boxplots_gen12 <- ggplot(calc_df, aes(x = Regime, y = mean_pop_longevi
   scale_x_discrete(labels = c(expression("B"["1-10"]), expression("O"["1-10"]))) +
   theme_bw() +
   labs(
-    title = "Mean population longevity - generation 12",
+    title = "Longevity - generation 12",
     x = NULL,
     y = "Longevity (days)"
   ) +
@@ -86,7 +86,7 @@ longevity_boxplots_anc_gen12 <- ggplot(calc_df, aes(x = Treatment, y = mean_pop_
                               expression("nB"["1-5"]))) +
   theme_bw() +
   labs(
-    title = "Mean population longevity - generation 12",
+    title = "Longevity - generation 12",
     x = NULL,
     y = "Longevity (days)"
   ) +

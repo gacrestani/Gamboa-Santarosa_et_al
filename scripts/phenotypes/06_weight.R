@@ -59,7 +59,7 @@ weight_boxplots <- ggplot(calc_df, aes(x = Regime, y = wet_weight, fill = Regime
   scale_y_continuous(limits = c(5, 15), breaks = seq(5, 12.5, by = 2.5)) +
   scale_x_discrete(labels = c(expression("B"["1-10"]), expression("O"["1-10"]))) +
   labs(
-    title = "Mean population weight",
+    title = "Body weight",
     x = NULL,
     y = "Weight (mg)"
   ) +
@@ -82,7 +82,7 @@ weight_boxplots_anc <- ggplot(calc_df, aes(x = Treatment, y = wet_weight, fill =
                               expression("nBO"["1-5"]),
                               expression("nB"["1-5"]))) +
   labs(
-    title = "Mean population weight",
+    title = "Body weight",
     x = NULL,
     y = "Weight (mg)"
   ) +

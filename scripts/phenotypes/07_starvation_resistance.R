@@ -78,7 +78,7 @@ starvation_boxplots <- ggplot(calc_df, aes(x = Regime, y = avg_survival, fill = 
   scale_y_continuous(limits = c(25, 135), breaks = seq(25, 125, by = 25)) +
   scale_x_discrete(labels = c(expression("B"["1-10"]), expression("O"["1-10"]))) +
   labs(
-    title = "Mean population starvation resistance",
+    title = "Starvation resistance",
     x = NULL,
     y = "Survival (hours)"
   ) +
@@ -101,7 +101,7 @@ starvation_boxplots_anc <- ggplot(calc_df, aes(x = Treatment, y = avg_survival, 
                               expression("nB"["1-5"]))) +
   
   labs(
-    title = "Mean population starvation resistance",
+    title = "Starvation resistance",
     x = NULL,
     y = "Survival (hours)"
   ) +
