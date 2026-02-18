@@ -1,4 +1,4 @@
-# Analysis Compendium: Walsh et al. (In Review)
+# Analysis Compendium: Santarosa et al. (In Review)
 
 This repository contains the R scripts and analysis pipeline used to reproduce the genomic and phenotypic results presented in **Santarosa et al. (In Review)**.
 
