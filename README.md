@@ -1,6 +1,6 @@
-# Analysis Compendium: Santarosa et al. (In Review)
+# Analysis Compendium: Gamboa-Santarosa et al. (In Review)
 
-This repository contains the R scripts and analysis pipeline used to reproduce the genomic and phenotypic results presented in **Santarosa et al. (In Review)**.
+This repository contains the R scripts and analysis pipeline used to reproduce the genomic and phenotypic results presented in **Gamboa-Santarosa et al. (In Review)**.
 
 **The raw data is NOT hosted in this repository.** To reproduce this analysis, you must first download the dataset from Dryad: **[Dryad DOI Link Here]**
 
@@ -67,7 +67,7 @@ The scripts in `scripts/genomics/` process the SNP tables and perform enrichment
 
 If you use this code or data, please cite:
 
-> Santarosa AKG, et al. (In Review). Selection for postponed reproduction increases longevity and immune defense in ten-fold replicated experimentally evolved _Drosophila melanogaster_ populations.
+> Gamboa-Santarosa AKG, et al. (In Review). Selection for postponed reproduction increases longevity and immune defense in ten-fold replicated experimentally evolved _Drosophila melanogaster_ populations.
 
 ## License
 
