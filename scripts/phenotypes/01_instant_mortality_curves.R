@@ -140,3 +140,12 @@ cox.zph(cox_model) # Proportionality is violated
 
 cox_model <- coxph(Surv(Day, status) ~ tt(Regime) + tt(Ancestry) + tt(Sex), data = dead_flies)
 summary(cox_model)
+
+
+# Calculate CI for RNA-Seq experiment
+surv_obj <- Surv(time = dead_flies$Day, dead_flies$status)
+
+fit <- survfit(surv_obj ~ Regime, data = dead_flies)
+
+summary(fit)
+quantile(fit, probs = c(0.2, 0.4, 0.6, 0.8))

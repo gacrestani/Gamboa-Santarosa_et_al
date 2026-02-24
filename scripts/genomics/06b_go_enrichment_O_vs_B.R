@@ -81,20 +81,20 @@ simple_go_results <- simplify(go_results)
 simple_go_results_df <- as.data.frame(simple_go_results)
 dotplot <- dotplot(simple_go_results, showCategory = 21) + ggtitle("GO Enrichment Analysis - O1-10 vs B1-10")
 
-# Save outputs
-
-# Gene list
-write.table(genes, file = "results/significant_genes.csv", sep = ",", row.names = FALSE, quote = FALSE)
-
-# GO results
-write.table(go_results_df, file = "results/go_enrichment_results.csv", sep = ",", row.names = FALSE, quote = FALSE)
-
-# Save dotplot
-ggsave(
-  "results/go_enrichment_dotplot_o_vs_b.png",
-  dotplot,
-  width = 8,
-  height = 11,
-  units = "in",
-  dpi = 300
-)
+# # Save outputs
+# 
+# # Gene list
+# write.table(genes, file = "results/significant_genes_OvsB.csv", sep = ",", row.names = FALSE, quote = FALSE)
+# 
+# # GO results
+# write.table(go_results_df, file = "results/go_enrichment_results_OvsB.csv", sep = ",", row.names = FALSE, quote = FALSE)
+# 
+# # Save dotplot
+# ggsave(
+#   "results/figures/go_enrichment_dotplot_o_vs_b.jpeg",
+#   dotplot,
+#   width = 8,
+#   height = 11,
+#   units = "in",
+#   dpi = 300
+# )

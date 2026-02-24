@@ -10,7 +10,7 @@ source("scripts/utils.R")
 
 ReadSnpTable <-
   function(
-    path = "data/snp_tables/filtered_snps.txt",
+    path = "data/filtered_snps.txt",
     mode = "shahrestani") {
     
     snp_table <- data.table::fread(file = path, header = TRUE)
@@ -116,7 +116,7 @@ FilterChromosomes <-
 
 ReadAndPrepare <-
   function(
-    path = "data/snp_tables/filtered_snps.txt",
+    path = "data/filtered_snps.txt",
     mode = "shahrestani",
     limit = 0.001,
     min_cov = 30,
@@ -149,6 +149,13 @@ ScaleSnpTable <-
     
     return(snp_table)
   }
+
+
+# Create needed directories
+dir.create("data/processed", showWarnings = FALSE)
+dir.create("results", showWarnings = FALSE)
+dir.create("results/figures", showWarnings = FALSE)
+
 
 # Create snp tables
 snp_table_shahrestani <- as.data.frame(ReadAndPrepare(mode = "shahrestani"))

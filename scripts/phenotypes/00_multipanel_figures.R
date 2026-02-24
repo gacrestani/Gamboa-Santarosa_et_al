@@ -35,19 +35,11 @@ ancestry <- ggarrange(mortality_curves_anc,
                       legend = "bottom",
                       ncol = 2, nrow = 4)
 
-# ggsave("/home/crestang/Repositories/genomic_analysis/results/figures/phenotypic_assays/default_phenotype_panels.svg",
-#        plot = default,
-#        width = 8.5, height = 11, units = "in", dpi = 600)
-# 
-# ggsave("/home/crestang/Repositories/genomic_analysis/results/figures/phenotypic_assays/ancestry_phenotype_panels.svg",
-#        plot = ancestry,
-#        width = 8.5, height = 11, units = "in", dpi = 600)
-
-ggsave("results/default_phenotype_panels.png",
+ggsave("results/figures/figure2.jpeg",
        plot = default,
        width = 8.5, height = 11, units = "in", dpi = 600)
 
-ggsave("results/ancestry_phenotype_panels.png",
+ggsave("results/figures/supplementary_figure2.jpeg",
        plot = ancestry,
        width = 8.5, height = 11, units = "in", dpi = 600)
 
@@ -80,21 +72,13 @@ intermediate_anc <- ggarrange(mortality_curves_anc_gen12,
                           legend = "bottom",
                           nrow = 2)
 
-# ggsave("/home/crestang/Repositories/genomic_analysis/results/figures/phenotypic_assays/intermediate_phenotypes.svg",
-#        plot = intermediate,
-#        width = 8.5, height = 6, units = "in", dpi = 600)
-# 
-# ggsave("/home/crestang/Repositories/genomic_analysis/results/figures/phenotypic_assays/intermediate_phenotypes_anc.svg",
-#        plot = intermediate_anc,
-#        width = 8.5, height = 6, units = "in", dpi = 600)
-
-ggsave("results/intermediate_phenotypes.png",
+ggsave("results/figures/supplementary_figure1.jpeg",
        plot = intermediate,
        width = 8.5, height = 6, units = "in", dpi = 600)
 
-ggsave("results/intermediate_phenotypes_anc.png",
-       plot = intermediate_anc,
-       width = 8.5, height = 6, units = "in", dpi = 600)
+# ggsave("results/figures/intermediate_phenotypes_anc.png",
+#        plot = intermediate_anc,
+#        width = 8.5, height = 6, units = "in", dpi = 600)
 
 
 # STATS

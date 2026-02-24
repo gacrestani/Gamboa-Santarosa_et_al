@@ -111,17 +111,6 @@ adapted_o_grid <- ggarrange(
   nrow = 3
 )
 
-ggsave(
-  "results/adapted_o.png",
-  adapted_o_grid,
-  width = 11,
-  height = 9,
-  units = "in",
-  dpi = 600
-)
-
-
-
 # Adapted B
 adapted_B <-
   GetManhattanPlot(
@@ -167,17 +156,6 @@ adapted_b_grid <- ggarrange(
   ncol = 1,
   nrow = 3
 )
-
-ggsave(
-  "results/adapted_b.png",
-  adapted_b_grid,
-  width = 11,
-  height = 9,
-  units = "in",
-  dpi = 600
-)
-
-
 
 # Classical B vs O
 classical_OvsB <-
@@ -225,8 +203,27 @@ classical_o_vs_b <- ggarrange(
   nrow = 3
 )
 
+# Save figures for paper submission
 ggsave(
-  "results/classical_o_vs_b.png",
+  "results/figures/figure4.jpeg",
+  adapted_o_grid,
+  width = 11,
+  height = 9,
+  units = "in",
+  dpi = 600
+)
+
+ggsave(
+  "results/figures/supplementary_figure4.jpeg",
+  adapted_b_grid,
+  width = 11,
+  height = 9,
+  units = "in",
+  dpi = 600
+)
+
+ggsave(
+  "results/figures/supplementary_figure5.jpeg",
   classical_o_vs_b,
   width = 11,
   height = 9,

@@ -79,7 +79,7 @@ pca_combined <- ggarrange(
 )
 
 ggsave(
-  filename = "results/figure_3_pca.png",
+  filename = "results/figures/figure3.jpeg",
   plot = pca_combined,
   width = 10,
   height = 5,

@@ -7,8 +7,8 @@ This repository contains the R scripts and analysis pipeline used to reproduce t
 ### Setup Instructions
 1. Clone this repository.
 2. Download the data from the Dryad link above.
-3. Place the phenotypic data files into a folder named `data/phenotypic_data/` in the root of this project.
-4. Place the genomic data files into a folder named `data/snp_tables/` in the root of this project.
+3. Place the genomic data file (`filtered_snps.txt`) into the `data/` directory in the root of this project.
+4. Place the phenotypic data files into the `data/phenotypic_data/` directory in the root of this project.
 
 ## Reproducing the Environment
 
@@ -23,28 +23,37 @@ renv::restore()
 
 ```
 .
-├── data/                                   
-│   ├── phenotypic_data/                      
-│   │   ├── desiccation_resistance_gen_22.xlsx
-│   │   ├── development_time_gen_14.xlsx
-│   │   └── ... [other phenotypic files]
-│   └── snp_tables/
-│       └── filtered_snps.txt                   
+├── data
+│   ├── cited_papers
+│   │   ├── evl389-sup-0002-tables1.xls
+│   │   └── pone.0138569.s014.xlsx
+│   ├── filtered_snps.txt
+│   ├── phenotypic_data
+│   │   ├── Desiccation Resistance Gen 22.xlsx
+│   │   ├── Development Time Gen 14.xlsx
+│   │   ├── Development Time Gen 20.xlsx
+│   │   ├── Dry and Wet Weight Gen 22.xlsx
+│   │   ├── Fecundity Gen 20.xlsx
+│   │   ├── Immunity Gen 22.xlsx
+│   │   ├── Longevity Gen 12.xlsx
+│   │   ├── Longevity Gen 20.xlsx
+│   │   └── Starvation Resistance Gen 22.xlsx
+│   └── processed
+│       └── [...]
 ├── scripts/
 │   ├── genomics/                             
 │   │   ├── 01_data_preparation.R
 │   │   ├── 02_cmh_tests.R       
-│   │   ├── ...
+│   │   ├── [...]
 │   │   └── 08_comparing_genes_to_other_articles.R
 │   ├── phenotypes/              
 │   │   ├── 00_multipanel_figures.R
 │   │   ├── 01_instant_mortality_curves.R
-│   │   └── ...
+│   │   └── [...]
 │   └── utils.R                  
 ├── genomic_analysis.Rproj       
 ├── renv.lock                    
 └── results/                     
-
 ```
 
 ## Workflow

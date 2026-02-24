@@ -1,5 +1,5 @@
 # Raw data directory
-data/snp_tables/*
+data/filtered_snps.txt
 data/processed/*
 results/*
 

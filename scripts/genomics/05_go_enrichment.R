@@ -117,7 +117,7 @@ write.table(annotation, file = "results/significant_snp_annotations.csv", sep = 
 
 # Save dotplot
 ggsave(
-  "results/go_enrichment_dotplot.png",
+  "results/figures/figure5.jpeg",
   dotplot,
   width = 8,
   height = 11,
