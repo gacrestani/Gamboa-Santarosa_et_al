@@ -28,7 +28,7 @@ renv::restore()
 │   │   ├── evl389-sup-0002-tables1.xls
 │   │   └── pone.0138569.s014.xlsx
 │   ├── filtered_snps.txt
-│   ├── phenotypic_data
+│   ├── phenomics_data
 │   │   ├── Desiccation Resistance Gen 22.xlsx
 │   │   ├── Development Time Gen 14.xlsx
 │   │   ├── Development Time Gen 20.xlsx
@@ -46,7 +46,7 @@ renv::restore()
 │   │   ├── 02_cmh_tests.R       
 │   │   ├── [...]
 │   │   └── 08_comparing_genes_to_other_articles.R
-│   ├── phenotypes/              
+│   ├── phenomics/              
 │   │   ├── 00_multipanel_figures.R
 │   │   ├── 01_instant_mortality_curves.R
 │   │   └── [...]
@@ -58,9 +58,9 @@ renv::restore()
 
 ## Workflow
 
-### 1. Phenotypic Analysis
+### 1. Phenomic Analysis
 
-The scripts in `scripts/phenotypes/` generate the mortality curves, boxplots, and statistical models for the life-history assays.
+The scripts in `scripts/phenomics/` generate the mortality curves, boxplots, and statistical models for the life-history assays.
 
 * **Run order:** Scripts are numbered sequentially (01-11).
 * **Key Output:** `00_multipanel_figures.R` aggregates the individual plots into the main figures used in the manuscript.
@@ -76,7 +76,7 @@ The scripts in `scripts/genomics/` process the SNP tables and perform enrichment
 
 If you use this code or data, please cite:
 
-> Gamboa-Santarosa AKG, et al. (In Review). Selection for postponed reproduction increases longevity and immune defense in ten-fold replicated experimentally evolved _Drosophila melanogaster_ populations.
+> Gamboa-Santarosa AK, et al. (In Review). Parallel adaptive responses to postponed reproduction increase lifespan and immune defense
 
 ## License
 

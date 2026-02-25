@@ -1,7 +1,7 @@
 library(readxl)
 library(tidyverse)
 
-input_df <- read_excel("data/phenotypic_data/Longevity Gen 12.xlsx") %>%
+input_df <- read_excel("data/phenomics_data/Longevity Gen 12.xlsx") %>%
   select(-Notes, - `Cage #`)
 
 days <- as.numeric(colnames(input_df)[3:ncol(input_df)])

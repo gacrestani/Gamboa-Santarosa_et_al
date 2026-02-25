@@ -2,7 +2,7 @@ library(readxl)
 library(tidyverse)
 library(ggpubr)
 
-input_df <- read_excel("data/phenotypic_data/Longevity Gen 20.xlsx") %>%
+input_df <- read_excel("data/phenomics_data/Longevity Gen 20.xlsx") %>%
   select(-sign, -Notes)
 
 days <- as.numeric(colnames(input_df)[3:ncol(input_df)])

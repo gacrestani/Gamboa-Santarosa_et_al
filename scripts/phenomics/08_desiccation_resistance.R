@@ -1,7 +1,7 @@
 library(readxl)
 library(tidyverse)
 
-file_path <- "data/phenotypic_data/Starvation Resistance Gen 22.xlsx"
+file_path <- "data/phenomics_data/Desiccation Resistance Gen 22.xlsx"
 
 read_transposed_xlsx <- function(file) {
   df <- read_excel(file, col_names = FALSE)
@@ -12,7 +12,7 @@ read_transposed_xlsx <- function(file) {
 }
 
 input_df <- read_transposed_xlsx(file_path)
-colnames(input_df) <- c("Population", "Vial", seq(from = 3, to = 180, by = 3))
+colnames(input_df) <- c("Population", "Vial", seq(1, 35, by = 1))
 
 summary_df <- input_df %>%
   separate(Vial, into = c("Sex", "Vial"), sep = 1) %>%
@@ -72,13 +72,14 @@ calc_df$Treatment <- factor(calc_df$Treatment, levels = c("OBO",
 
 
 # PLOTS
-starvation_boxplots <- ggplot(calc_df, aes(x = Regime, y = avg_survival, fill = Regime)) +
-  geom_boxplot(outlier.shape = NA, width = 0.6) +
+
+desiccation_boxplots <- ggplot(calc_df, aes(x = Regime, y = avg_survival, fill = Regime)) +
+  geom_boxplot(width = 0.6) +
   scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
-  scale_y_continuous(limits = c(25, 135), breaks = seq(25, 125, by = 25)) +
+  scale_y_continuous(limits = c(5, 22), breaks = seq(10, 20, by = 5)) +
   scale_x_discrete(labels = c(expression("B"["1-10"]), expression("O"["1-10"]))) +
   labs(
-    title = "Starvation resistance",
+    title = "Desiccation resistance",
     x = NULL,
     y = "Survival (hours)"
   ) +
@@ -89,19 +90,17 @@ starvation_boxplots <- ggplot(calc_df, aes(x = Regime, y = avg_survival, fill = 
   facet_wrap(~Sex) +
   stat_compare_means(comparisons = list(c("B-type", "O-type")), label = "p.signif", method = "t.test")
 
-starvation_boxplots
-
-starvation_boxplots_anc <- ggplot(calc_df, aes(x = Treatment, y = avg_survival, fill = Regime)) +
+desiccation_boxplots_anc <- ggplot(calc_df, aes(x = Treatment, y = avg_survival, fill = Regime)) +
   geom_boxplot(width = 0.6, aes(group = Treatment)) +
   scale_fill_manual(values = c("B-type" = "#E43A3F", "O-type" = "#377EB8")) +
-  scale_y_continuous(limits = c(25, 135), breaks = seq(25, 125, by = 25)) +
+  scale_y_continuous(limits = c(5, 22), breaks = seq(10, 20, by = 5)) +
   scale_x_discrete(labels = c(expression("OBO"["1-5"]),
                               expression("OB"["1-5"]),
                               expression("nBO"["1-5"]),
                               expression("nB"["1-5"]))) +
   
   labs(
-    title = "Starvation resistance",
+    title = "Desiccation resistance",
     x = NULL,
     y = "Survival (hours)"
   ) +
@@ -115,12 +114,13 @@ starvation_boxplots_anc <- ggplot(calc_df, aes(x = Treatment, y = avg_survival, 
     c(3, 4)),
     label = "p.format",
     method = "t.test",
-    label.y = 120)
+    label.y = 20)
 
-starvation_boxplots_anc
+desiccation_boxplots_anc
 
-# Statistical Analysis
-lm_fit_starvation <- lm(avg_survival ~ Regime * Ancestry + Sex, data = calc_df)
-summary(lm_fit_starvation)
 
-confint(lm_fit_starvation)
+# Statistical analysis
+lm_fit_desiccation <- lm(avg_survival ~ Regime * Ancestry + Sex, data = calc_df)
+summary(lm_fit_desiccation)
+
+confint(lm_fit_desiccation)

@@ -1,11 +1,11 @@
-source("scripts/phenotypes/01_instant_mortality_curves.R")
-source("scripts/phenotypes/02_longevity_boxplots.R")
-source("scripts/phenotypes/03_development_time.R")
-source("scripts/phenotypes/04_fecundity.R")
-source("scripts/phenotypes/05_immune_defense.R")
-source("scripts/phenotypes/06_weight.R")
-source("scripts/phenotypes/07_starvation_resistance.R")
-source("scripts/phenotypes/08_desiccation_resistance.R")
+source("scripts/phenomics/01_instant_mortality_curves.R")
+source("scripts/phenomics/02_longevity_boxplots.R")
+source("scripts/phenomics/03_development_time.R")
+source("scripts/phenomics/04_fecundity.R")
+source("scripts/phenomics/05_immune_defense.R")
+source("scripts/phenomics/06_weight.R")
+source("scripts/phenomics/07_starvation_resistance.R")
+source("scripts/phenomics/08_desiccation_resistance.R")
 
 library(ggpubr)
 
@@ -47,9 +47,9 @@ ggsave("results/figures/supplementary_figure2.jpeg",
 
 
 
-source("scripts/phenotypes/09_instant_mortality_curves_gen12.R")
-source("scripts/phenotypes/10_longevity_boxplots_gen12.R")
-source("scripts/phenotypes/11_development_time_gen14.R")
+source("scripts/phenomics/09_instant_mortality_curves_gen12.R")
+source("scripts/phenomics/10_longevity_boxplots_gen12.R")
+source("scripts/phenomics/11_development_time_gen14.R")
 
 
 intermediate <- ggarrange(mortality_curves_gen12,

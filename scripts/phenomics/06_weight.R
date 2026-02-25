@@ -1,7 +1,7 @@
 library(readxl)
 library(tidyverse)
 
-file_path <- "data/phenotypic_data/Dry and Wet Weight Gen 22.xlsx"
+file_path <- "data/phenomics_data/Dry and Wet Weight Gen 22.xlsx"
 
 input_df <- read_excel(file_path, na = "NA") %>%
   mutate(`Sex Replicate` = as.character(`Sex Replicate`))
