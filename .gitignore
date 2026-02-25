@@ -2,6 +2,8 @@
 data/filtered_snps.txt
 data/processed/*
 results/*
+!results/figures/figure1.jpeg
+!results/supplementary_tables.jpeg
 
 renv/library/
 

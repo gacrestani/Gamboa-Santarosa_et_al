@@ -4,6 +4,8 @@ This repository contains the R scripts and analysis pipeline used to reproduce t
 
 **The raw data is NOT hosted in this repository.** To reproduce this analysis, you must first download the dataset from Dryad: **[Dryad DOI Link Here]**
 
+Note: Figure 1 and the supplementary tables have been generated manually and therefore can not be reproduced via script.
+
 ### Setup Instructions
 1. Clone this repository.
 2. Download the data from the Dryad link above.
