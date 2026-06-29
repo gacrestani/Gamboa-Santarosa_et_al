@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Interactive Manhattan plots &middot; Gamboa-Santarosa et al.</title>
+<style>
+  :root { --ink:#1a1a1a; --muted:#666; --line:#e3e3e3; --accent:#1F6FB2; }
+  * { box-sizing:border-box; }
+  body { margin:0; padding:2.5rem 1.25rem 4rem;
+         font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+         color:var(--ink); background:#fafafa; }
+  main { max-width:760px; margin:0 auto; }
+  h1 { font-size:1.6rem; margin:0 0 .4rem; }
+  .lede { color:var(--muted); margin:0 0 1.5rem; }
+  .how { background:#fff; border:1px solid var(--line); border-radius:8px;
+         padding:.85rem 1rem; margin:0 0 1.75rem; font-size:.95rem; }
+  .how b { color:var(--accent); }
+  ul { list-style:none; padding:0; margin:0; display:grid; gap:.85rem; }
+  a.card { display:block; text-decoration:none; color:inherit; background:#fff;
+           border:1px solid var(--line); border-radius:8px; padding:1rem 1.1rem;
+           transition:border-color .12s, transform .12s; }
+  a.card:hover { border-color:var(--accent); transform:translateY(-1px); }
+  a.card .name { font-weight:600; font-size:1.05rem; }
+  a.card .desc { color:var(--muted); font-size:.93rem; margin-top:.15rem; }
+  footer { color:var(--muted); font-size:.85rem; margin-top:2rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Interactive Manhattan plots</h1>
+  <p class="lede">Genome-wide allele-frequency differentiation from an experimental-evolution
+  study of <i>Drosophila melanogaster</i> (Evolve &amp; Resequence, pool-seq). Each point is a
+  SNP; the x-axis is genomic position across chromosome arms 2L, 2R, 3L, 3R, X; the y-axis is
+  &minus;log<sub>10</sub>(p) from a Cochran&ndash;Mantel&ndash;Haenszel (CMH) test across replicate
+  populations. O is the selected regime, B the control.</p>
+
+  <p class="how"><b>How to read:</b> hover a highlighted SNP to see its per-replicate
+  allele-frequency trajectory (O in blue, B in red; generation&nbsp;1 &rarr; final).
+  <b>Asterisks</b> mark SNPs also significant at the stricter FWER&nbsp;0.01 threshold. Each panel's
+  colour coding is given in its bottom legend.</p>
+
+  <ul>
+    <li><a class="card" href="interactive_manhattan/OvsO_CMH.html">
+      <div class="name">O vs O (CMH)</div>
+      <div class="desc">Allele-frequency change within the selected (O) regime, generation 1 &rarr; 20.</div></a></li>
+    <li><a class="card" href="interactive_manhattan/OvsB_CMH.html">
+      <div class="name">O vs B (CMH)</div>
+      <div class="desc">Divergence between the selected (O) and control (B) regimes at the final generations.</div></a></li>
+    <li><a class="card" href="interactive_manhattan/BvsB_CMH.html">
+      <div class="name">B vs B (CMH)</div>
+      <div class="desc">Allele-frequency change within the control (B) regime, generation 1 &rarr; 56.</div></a></li>
+    <li><a class="card" href="interactive_manhattan/OvsO_adapted.html">
+      <div class="name">O vs O (Adapted CMH)</div>
+      <div class="desc">The O-regime test corrected for genetic drift (ACER, using effective population size).</div></a></li>
+  </ul>
+
+  <footer>Gamboa-Santarosa et al. &middot; hover tooltips render per-SNP allele-frequency trajectories.</footer>
+</main>
+</body>
+</html>
