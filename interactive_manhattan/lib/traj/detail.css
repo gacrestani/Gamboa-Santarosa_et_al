@@ -24,9 +24,11 @@
 #snp-detail .sd-body { display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap; }
 #snp-detail svg { width: 100%; max-width: 460px; height: auto; flex: 1 1 320px; touch-action: none; }
 
-#snp-detail .sd-key { flex: 0 0 auto; display: flex; flex-direction: column; gap: 0.6rem; padding-top: 0.4rem; }
+#snp-detail .sd-key { flex: 0 0 auto; display: flex; flex-direction: column; gap: 0.3rem; padding-top: 0.4rem; }
+#snp-detail .sd-key-group { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #888; margin-top: 0.35rem; }
+#snp-detail .sd-key-group:first-child { margin-top: 0; }
 #snp-detail .sd-key-row { display: flex; align-items: center; gap: 0.3rem; }
-#snp-detail .sd-key-label { font-weight: 600; font-size: 0.82rem; width: 1.4em; }
+#snp-detail .sd-key-label { font-weight: 700; font-size: 0.8rem; width: 2.4em; font-variant-numeric: tabular-nums; }
 #snp-detail .sd-key-chips { display: flex; flex-wrap: wrap; gap: 3px; }
 #snp-detail .sd-chip {
   width: 1.55em; height: 1.55em; border-radius: 3px; cursor: pointer;
