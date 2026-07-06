@@ -18,7 +18,7 @@
 #snp-detail .sd-head { display: flex; align-items: baseline; gap: 0.5rem 0.75rem; flex-wrap: wrap; }
 #snp-detail .sd-pos { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; }
 #snp-detail .sd-gene { color: #444; font-style: italic; }
-#snp-detail .sd-stats { color: #666; font-size: 0.86rem; margin-left: auto; }
+#snp-detail .sd-stats { color: #666; font-size: 0.86rem; margin-left: auto; text-align: right; line-height: 1.4; }
 #snp-detail .sd-hint { color: #888; font-size: 0.8rem; margin: 0.15rem 0 0.35rem; }
 
 #snp-detail .sd-body { display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap; }

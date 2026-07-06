@@ -54,6 +54,11 @@
     document.body.appendChild(panel);
     buildKey();
     buildSvgFrame();
+    // Clicking anywhere that is not a line hit-area or a chip clears the pin
+    // (those handlers stopPropagation, so this only fires for "outside" clicks).
+    document.addEventListener("click", function () {
+      if (pinned) { pinned = null; clearHL(); }
+    });
   }
 
   function buildKey() {
@@ -78,7 +83,7 @@
           (function (tr, r, chip) {
             chip.addEventListener("mouseenter", function () { onEnter(tr, r); });
             chip.addEventListener("mouseleave", onLeave);
-            chip.addEventListener("click", function () { onClick(tr, r); });
+            chip.addEventListener("click", function (e) { e.stopPropagation(); onClick(tr, r); });
           })(tr, r, chip);
           chips.appendChild(chip);
           chipEls[tr].push(chip);
@@ -137,7 +142,7 @@
       (function (tr, r) {
         hit.addEventListener("mouseenter", function () { onEnter(tr, r); });
         hit.addEventListener("mouseleave", onLeave);
-        hit.addEventListener("click", function () { onClick(tr, r); });
+        hit.addEventListener("click", function (e) { e.stopPropagation(); onClick(tr, r); });
       })(tr, r);
       svg._gHit.appendChild(hit);
       lineRefs[tr].push({ line: line, d1: d1, d2: d2, v: p });
@@ -204,7 +209,7 @@
     if (rec.c != null) stats.push("CMH −log₁₀p = " + rec.c);
     if (rec.a != null) stats.push("adapted = " + rec.a);
     if (rec.sig) stats.push("sig: " + rec.sig);
-    panel.querySelector(".sd-stats").textContent = stats.join("  ·  ");
+    panel.querySelector(".sd-stats").innerHTML = stats.join("<br>");
     clearData();
     TREATS.forEach(function (tr) { drawTreat(tr, rec[tr] || []); });
     clearHL();
