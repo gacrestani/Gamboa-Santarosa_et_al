@@ -16,14 +16,13 @@
 
   var SVGNS = "http://www.w3.org/2000/svg";
   var COL = { OBO: "#1F6FB2", OB: "#6DB3E8", nBO: "#C0392B", nB: "#E8896B" };
-  var FINAL_GEN = { OBO: "20", OB: "20", nBO: "56", nB: "56" };
   var TREATS = ["OBO", "OB", "nBO", "nB"];   // draw/iteration order
   var NREP = 5;
   var GROUPS = [
     { label: "selected (O)", treats: ["OBO", "OB"] },
-    { label: "control (n)",  treats: ["nBO", "nB"] },
+    { label: "control (B)",  treats: ["nBO", "nB"] },
   ];
-  var W = 470, H = 336, M = { t: 14, r: 24, b: 50, l: 44 };
+  var W = 470, H = 330, M = { t: 14, r: 24, b: 44, l: 44 };
   var plotW = W - M.l - M.r, plotH = H - M.t - M.b;
   var xG1 = M.l + 8, xFin = M.l + plotW - 8;
   function yOf(f) { return M.t + (1 - f) * plotH; }
@@ -109,9 +108,6 @@
     var xf = svgEl("text", { class: "sd-xtick", x: xFin, y: H - M.b + 18, "text-anchor": "middle" });
     xf.textContent = "Final";
     svg.appendChild(xf);
-    var note = svgEl("text", { class: "sd-ylab", x: (xG1 + xFin) / 2, y: H - M.b + 34, "text-anchor": "middle" });
-    note.textContent = "selected → gen 20   ·   control → gen 56";
-    svg.appendChild(note);
     gLines = svgEl("g", {});
     var gHit = svgEl("g", {});
     gHit.setAttribute("data-role", "hit");
@@ -169,8 +165,8 @@
     var d = ref.v[1] - ref.v[0], sign = d >= 0 ? "+" : "−";
     readout.innerHTML =
       '<span class="sd-swatch" style="background:' + COL[tr] + '"></span>' +
-      "<b>" + tr + " replicate " + (r + 1) + "</b> &nbsp; " +
-      "gen 1 " + fmt(ref.v[0]) + " → gen " + FINAL_GEN[tr] + " " + fmt(ref.v[1]) +
+      "<b>" + tr + " rep. " + (r + 1) + "</b> &nbsp; " +
+      fmt(ref.v[0]) + " → " + fmt(ref.v[1]) +
       ' &nbsp; <span class="sd-muted">(Δ ' + sign + fmt(Math.abs(d)) + ")</span>";
   }
 
