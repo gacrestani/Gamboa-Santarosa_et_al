@@ -1,0 +1,60 @@
+/* detail.css -- interactive per-SNP trajectory panel for the interactive
+   Manhattan plots (05f_interactive_manhattan.R). Loaded beside detail.js and
+   trajectories.js under lib/traj/. Light theme, matches index.html. */
+
+#snp-detail {
+  max-width: 760px;
+  margin: 0.5rem auto 2.5rem;
+  padding: 1rem 1.15rem 1.15rem;
+  font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #1a1a1a;
+  background: #fff;
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+#snp-detail[hidden] { display: none; }
+
+#snp-detail .sd-head { display: flex; align-items: baseline; gap: 0.5rem 0.75rem; flex-wrap: wrap; }
+#snp-detail .sd-pos { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; }
+#snp-detail .sd-gene { color: #444; font-style: italic; }
+#snp-detail .sd-stats { color: #666; font-size: 0.86rem; margin-left: auto; }
+#snp-detail .sd-hint { color: #888; font-size: 0.8rem; margin: 0.15rem 0 0.35rem; }
+
+#snp-detail .sd-body { display: flex; gap: 1rem; align-items: flex-start; flex-wrap: wrap; }
+#snp-detail svg { width: 100%; max-width: 460px; height: auto; flex: 1 1 320px; touch-action: none; }
+
+#snp-detail .sd-key { flex: 0 0 auto; display: flex; flex-direction: column; gap: 0.6rem; padding-top: 0.4rem; }
+#snp-detail .sd-key-row { display: flex; align-items: center; gap: 0.3rem; }
+#snp-detail .sd-key-label { font-weight: 600; font-size: 0.82rem; width: 1.4em; }
+#snp-detail .sd-key-chips { display: flex; flex-wrap: wrap; gap: 3px; }
+#snp-detail .sd-chip {
+  width: 1.55em; height: 1.55em; border-radius: 3px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 0.74rem; font-weight: 700; user-select: none;
+  opacity: 0.85; transition: opacity 0.1s, transform 0.1s;
+}
+#snp-detail .sd-chip:hover, #snp-detail .sd-chip.sd-active { opacity: 1; transform: scale(1.12); }
+
+#snp-detail .sd-readout {
+  margin-top: 0.6rem; min-height: 1.4em; font-size: 0.88rem; font-variant-numeric: tabular-nums;
+}
+#snp-detail .sd-readout .sd-swatch {
+  display: inline-block; width: 0.7em; height: 0.7em; border-radius: 2px; margin-right: 0.35em; vertical-align: baseline;
+}
+#snp-detail .sd-readout b { font-weight: 700; }
+#snp-detail .sd-readout .sd-muted { color: #999; }
+
+/* SVG line styling driven by classes/attrs toggled in detail.js */
+#snp-detail .sd-line { fill: none; stroke-width: 1.6; stroke-opacity: 0.5; transition: stroke-opacity 0.1s; }
+#snp-detail .sd-hit  { fill: none; stroke: transparent; stroke-width: 12; cursor: pointer; }
+#snp-detail .sd-dot  { stroke: #fff; stroke-width: 0.6; }
+#snp-detail.sd-hl .sd-line { stroke-opacity: 0.12; }
+#snp-detail.sd-hl .sd-line.sd-on { stroke-opacity: 1; stroke-width: 2.6; }
+#snp-detail.sd-hl .sd-dot { opacity: 0.12; }
+#snp-detail.sd-hl .sd-dot.sd-on { opacity: 1; }
+#snp-detail .sd-axis { stroke: #ccc; stroke-width: 1; }
+#snp-detail .sd-grid { stroke: #eee; stroke-width: 1; }
+#snp-detail .sd-tick { fill: #666; font-size: 11px; }
+#snp-detail .sd-xtick { fill: #333; font-size: 12px; font-weight: 600; }
+#snp-detail .sd-ylab { fill: #444; font-size: 12px; }
