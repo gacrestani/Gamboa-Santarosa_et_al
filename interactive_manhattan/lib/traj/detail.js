@@ -206,8 +206,10 @@
     }
     panel.querySelector(".sd-gene").textContent = rec.g || "";
     var stats = [];
-    if (rec.c != null) stats.push("CMH −log₁₀p = " + rec.c);
-    if (rec.a != null) stats.push("adapted = " + rec.a);
+    if (rec.oo != null) stats.push("O vs O −log₁₀p = " + rec.oo);
+    if (rec.ob != null) stats.push("O vs B −log₁₀p = " + rec.ob);
+    if (rec.bb != null) stats.push("B vs B −log₁₀p = " + rec.bb);
+    if (rec.ad != null) stats.push("adapted (O vs O) = " + rec.ad);
     if (rec.sig) stats.push("sig: " + rec.sig);
     panel.querySelector(".sd-stats").innerHTML = stats.join("<br>");
     clearData();
